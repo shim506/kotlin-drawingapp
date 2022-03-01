@@ -22,7 +22,7 @@ class Rectangle() {
     }
 
     fun getAlpha(): Int {
-        return (rgba.a.ordinal + 1) / 10 * 255
+        return (rgba.a.ordinal + 1) *255 / 10
     }
 }
 
@@ -43,7 +43,7 @@ class RectangleFactory() {
         val rectangle = Rectangle()
         rectangle.id = getRandomId()
         rectangle.size = Size(RECTANGLE_WIDTH, RECTANGLE_HEIGHT)
-        rectangle.point = getRandomPoint(maxWidth, maxHeight)
+        rectangle.point = getRandomPoint(maxWidth.toInt(), maxHeight.toInt())
         rectangle.rgba = getRandomRgba()
         rectangle.num = rectangleNum
         return rectangle
@@ -59,9 +59,9 @@ class RectangleFactory() {
         return Rgba(r, g, b, enumList[a - 1])
     }
 
-    private fun getRandomPoint(maxWidth: Float, maxHeight: Float): Point {
-        val width = (0..maxWidth.toInt()).random()
-        val height = (0..maxHeight.toInt()).random()
+    private fun getRandomPoint(maxWidth: Int, maxHeight: Int): Point {
+        val width = (0..maxWidth).random()
+        val height = (0..maxHeight).random()
         return Point(width, height)
     }
 
