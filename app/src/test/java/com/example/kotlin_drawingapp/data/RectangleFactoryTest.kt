@@ -1,10 +1,20 @@
 package com.example.kotlin_drawingapp.data
 
 import org.junit.Assert.*
+import org.junit.Before
 
 import org.junit.Test
 
 class RectangleFactoryTest {
+    @Before
+    fun initialize() {
+        repeat(10){
+            val rectangle = RectangleFactory().createRectangle(10F, 20F)
+            println(rectangle.toString())
+        }
+
+    }
+
     @Test
     fun getRandomId() {
         repeat(10) {

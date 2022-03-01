@@ -7,7 +7,7 @@ const val RECTANGLE_WIDTH = 150
 const val RECTANGLE_HEIGHT = 120
 const val RGB_MIN_VALUE = 0
 const val RGB_MAX_VALUE = 255
-const val ALPHA_MIN_VALUE = 0
+const val ALPHA_MIN_VALUE = 1
 const val ALPHA_MAX_VALUE = 10
 
 class Rectangle() {
@@ -18,22 +18,27 @@ class Rectangle() {
     lateinit var rgba: Rgba
 
     override fun toString(): String {
+        return "Rect$num ($id), X:${point.x},Y:${point.y}, W${size.width}, H${size.height}, R:${rgba.r}, G:${rgba.g}, B:${rgba.b}, Alpha:${rgba.a}"
+    }
 
-        return "d"
+    fun getAlpha(): Int {
+        return (rgba.a.ordinal + 1) / 10 * 255
     }
 }
 
 data class Size(val width: Int, val height: Int)
 data class Point(val x: Int, val y: Int)
-data class Rgba(val r: Int, val g: Int, val b: Int, val a: Int)
-
+data class Rgba(val r: Int, val g: Int, val b: Int, val a: AlphaEnum)
+enum class AlphaEnum {
+    ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, Ten
+}
 
 class RectangleFactory() {
     companion object {
-        var rectangleNum = 0
+        private var rectangleNum = 0
     }
 
-    fun createRectangle(maxWidth: Int, maxHeight: Int): Rectangle {
+    fun createRectangle(maxWidth: Float, maxHeight: Float): Rectangle {
         rectangleNum++
         val rectangle = Rectangle()
         rectangle.id = getRandomId()
@@ -49,12 +54,14 @@ class RectangleFactory() {
         val g = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
         val b = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
         val a = (ALPHA_MIN_VALUE..ALPHA_MAX_VALUE).random()
-        return Rgba(r, g, b, a)
+
+        val enumList = AlphaEnum.values()
+        return Rgba(r, g, b, enumList[a - 1])
     }
 
-    private fun getRandomPoint(maxWidth: Int, maxHeight: Int): Point {
-        val width = (0..maxWidth).random()
-        val height = (0..maxHeight).random()
+    private fun getRandomPoint(maxWidth: Float, maxHeight: Float): Point {
+        val width = (0..maxWidth.toInt()).random()
+        val height = (0..maxHeight.toInt()).random()
         return Point(width, height)
     }
 
