@@ -76,7 +76,7 @@ class RectangleFactory() {
             repeat(3 - numericIterValue) { st.append((97..122).random().toChar()) }
             st.append('-')
         }
-
+        st.setLength(st.length - 1);
 
         return st.toString()
     }
