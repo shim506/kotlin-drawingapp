@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.marginTop
 import androidx.window.layout.WindowMetricsCalculator
+import com.example.kotlin_drawingapp.CanvasContract.Present
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
@@ -21,23 +22,26 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
 private lateinit var binding: ActivityMainBinding
-private var widthDp: Float = 0F
-private var heightDp: Float = 0F
 
-class MainActivity : AppCompatActivity() {
+lateinit var canvasPresent: Present
+
+class MainActivity : AppCompatActivity(), CanvasContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        canvasPresent = CanvasPresent(this)
+
         loggerInitialize()
-        setWindowSize()
         addRectangleButtonListening()
     }
 
     private fun addRectangleButtonListening() {
         binding.rectangleButton.setOnClickListener {
-            val rect = RectangleFactory().createRectangle(widthDp, heightDp)
+            canvasPresent.addRectangle()
+
+           /* val rect = RectangleFactory().createRectangle(widthDp, heightDp)
             Logger.d(rect.toString())
             val view = View(this)
             view.id = View.generateViewId()
@@ -48,8 +52,13 @@ class MainActivity : AppCompatActivity() {
             view.layoutParams = lp
             binding.container.addView(view)
 
-            setConstraint(view, rect.point.x, rect.point.y)
+            setConstraint(view, rect.point.x, rect.point.y)*/
         }
+    }
+
+    override fun showRectangle(rectangleList:MutableList<Rectangle>) {
+
+
     }
 
     private fun setConstraint(view: View, marginLeftDp: Int, marginTopDp: Int) {
@@ -84,12 +93,5 @@ class MainActivity : AppCompatActivity() {
         Logger.addLogAdapter(AndroidLogAdapter())
     }
 
-    private fun setWindowSize() {
-        val metrics = this.resources.displayMetrics
-        widthDp = (metrics.widthPixels /
-                metrics.density)
 
-        heightDp = (metrics.heightPixels /
-                metrics.density)
-    }
 }
