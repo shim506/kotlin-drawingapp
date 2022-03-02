@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.marginTop
 import androidx.window.layout.WindowMetricsCalculator
 import com.example.kotlin_drawingapp.CanvasContract.Present
+import com.example.kotlin_drawingapp.data.MyCanvas
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
@@ -22,8 +23,8 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
 private lateinit var binding: ActivityMainBinding
-
 lateinit var canvasPresent: Present
+lateinit var myCanvas: MyCanvas
 
 class MainActivity : AppCompatActivity(), CanvasContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,56 +40,55 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
 
     private fun addRectangleButtonListening() {
         binding.rectangleButton.setOnClickListener {
+            myCanvas = MyCanvas(this)
+            binding.canvasContainer?.addView(myCanvas)
             canvasPresent.addRectangle()
 
-           /* val rect = RectangleFactory().createRectangle(widthDp, heightDp)
-            Logger.d(rect.toString())
-            val view = View(this)
-            view.id = View.generateViewId()
-            val lp = ConstraintLayout.LayoutParams(rect.size.width, rect.size.height)
-            view.setBackgroundColor(
-                Color.argb(rect.getAlpha(), rect.rgba.r, rect.rgba.g, rect.rgba.b)
-            )
-            view.layoutParams = lp
-            binding.container.addView(view)
+            /* val rect = RectangleFactory().createRectangle(widthDp, heightDp)
+             Logger.d(rect.toString())
+             val view = View(this)
+             view.id = View.generateViewId()
+             val lp = ConstraintLayout.LayoutParams(rect.size.width, rect.size.height)
+             view.setBackgroundColor(
+                 Color.argb(rect.getAlpha(), rect.rgba.r, rect.rgba.g, rect.rgba.b)
+             )
+             view.layoutParams = lp
+             binding.container.addView(view)
 
-            setConstraint(view, rect.point.x, rect.point.y)*/
+             setConstraint(view, rect.point.x, rect.point.y)*/
         }
     }
 
-    override fun showRectangle(rectangleList:MutableList<Rectangle>) {
-
-
+    override fun showRectangle(rectangleList: MutableList<Rectangle>) {
+        rectangleList.forEach {
+            Logger.d(it.id)
+            myCanvas.drawRectangle(it)
+        }
     }
 
-    private fun setConstraint(view: View, marginLeftDp: Int, marginTopDp: Int) {
-        val set = ConstraintSet()
-        set.clone(binding.container)
-        set.connect(
-            view.id,
-            ConstraintSet.TOP,
-            binding.container.id,
-            ConstraintSet.TOP,
-            convertDpToPx(marginTopDp)
-        )
-        set.connect(
-            view.id,
-            ConstraintSet.LEFT,
-            binding.container.id,
-            ConstraintSet.LEFT,
-            convertDpToPx(marginLeftDp)
-        )
-        set.applyTo(binding.container)
-    }
+    /*
+        private fun setConstraint(view: View, marginLeftDp: Int, marginTopDp: Int) {
+            val set = ConstraintSet()
+            set.clone(binding.container)
+            set.connect(
+                view.id,
+                ConstraintSet.TOP,
+                binding.container.id,
+                ConstraintSet.TOP,
+                convertDpToPx(marginTopDp)
+            )
+            set.connect(
+                view.id,
+                ConstraintSet.LEFT,
+                binding.container.id,
+                ConstraintSet.LEFT,
+                convertDpToPx(marginLeftDp)
+            )
+            set.applyTo(binding.container)
+        }
 
-    private fun convertDpToPx(value: Int): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            value.toFloat(),
-            resources.displayMetrics
-        ).toInt()
-    }
 
+    */
     private fun loggerInitialize() {
         Logger.addLogAdapter(AndroidLogAdapter())
     }

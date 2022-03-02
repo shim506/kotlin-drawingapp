@@ -17,7 +17,6 @@ object Plane {
     fun addRectangle(rectangle: Rectangle , addListener: PlaneDataAddListener) {
         rectangleList.add(rectangle)
         addListener.onEvent(rectangleList)
-
     }
 
 }

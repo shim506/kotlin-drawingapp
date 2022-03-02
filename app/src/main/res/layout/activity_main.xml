@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.example.kotlin_drawingapp.data.MyCanvas
-        android:id="@+id/canvas"
+    <FrameLayout
+        android:id="@+id/canvas_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
