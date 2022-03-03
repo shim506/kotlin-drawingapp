@@ -5,10 +5,13 @@ import com.example.kotlin_drawingapp.data.Rectangle
 interface CanvasContract {
     interface Present {
         fun addRectangle()
+        fun setSelectedRectangle(x: Int, y: Int)
     }
 
     interface View {
         fun showRectangle(rectangleList: MutableList<Rectangle>)
+        fun showSelectedRectangle(selectedRectangle: Rectangle?)
+        fun setSelectedRec(selectedRec: Rectangle?)
     }
 
 }

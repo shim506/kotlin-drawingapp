@@ -15,13 +15,20 @@ class CanvasPresent(private val canvasView: CanvasContract.View) : CanvasContrac
 
     override fun addRectangle() {
         val rect = RectangleFactory().createRectangle(widthDp, heightDp)
-        Plane.addRectangle(rect , object : PlaneDataAddListener{
+        Plane.addRectangle(rect, object : PlaneDataAddListener {
             override fun onEvent(rectangleList: MutableList<Rectangle>) {
                 canvasView.showRectangle(rectangleList)
             }
 
         })
     }
+
+    override fun setSelectedRectangle(x: Int, y: Int) {
+        val selectedRec = Plane.setSelectedRectangle(x, y)
+        canvasView.setSelectedRec(selectedRec)
+       // canvasView.showRectangle(Plane.rectangleList)
+    }
+
 
     private fun setWindowSize() {
         val metrics = (canvasView as Context).resources.displayMetrics
@@ -33,6 +40,6 @@ class CanvasPresent(private val canvasView: CanvasContract.View) : CanvasContrac
     }
 }
 
-interface PlaneDataAddListener{
+interface PlaneDataAddListener {
     fun onEvent(rectangleList: MutableList<Rectangle>)
 }

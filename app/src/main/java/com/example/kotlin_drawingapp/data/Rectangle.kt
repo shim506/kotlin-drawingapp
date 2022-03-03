@@ -28,7 +28,7 @@ class Rectangle() {
 
 data class Size(val width: Int, val height: Int)
 data class Point(val x: Int, val y: Int)
-data class Rgba(val r: Int, val g: Int, val b: Int, val a: AlphaEnum)
+data class Rgba(var r: Int, var g: Int, var b: Int, val a: AlphaEnum)
 enum class AlphaEnum {
     ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, Ten
 }
