@@ -1,13 +1,9 @@
 package com.example.kotlin_drawingapp
 
 import android.content.Context
-import android.graphics.Color
-import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.kotlin_drawingapp.data.Plane
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
-import com.orhanobut.logger.Logger
 
 private var widthDp: Float = 0F
 private var heightDp: Float = 0F

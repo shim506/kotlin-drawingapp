@@ -8,13 +8,11 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
+import com.orhanobut.logger.Logger
 
-
-class MyCanvas : View {
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attr: AttributeSet) : super(context, attr)
+class MyCanvas(context: Context) : View(context) {
 
     var rect: RectF = RectF()
     private val paint = Paint()
@@ -47,4 +45,5 @@ class MyCanvas : View {
             resources.displayMetrics
         ).toInt()
     }
+
 }
