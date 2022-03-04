@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     lateinit var canvasPresent: Present
     lateinit var myCanvas: MyCanvas
     var selectedRectangle: Rectangle? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -29,18 +30,6 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
 
         loggerInitialize()
         addRectangleButtonListening()
-        colorChangeButtonListening()
-    }
-
-    override fun setSelectedRec(selectedRec: Rectangle?) {
-        selectedRectangle = selectedRec
-        myCanvas?.selectedRectangle = this.selectedRectangle
-    }
-
-    private fun colorChangeButtonListening() {
-        binding.rectangleColorButton?.setOnClickListener {
-            //selectedRectangle?.let { rect -> canvasPresent.changeColor(rect) }
-        }
     }
 
     private fun addRectangleButtonListening() {
@@ -51,36 +40,25 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         }
     }
 
+    override fun showSelectedBound(selectedRec: MutableList<Rectangle>) {
+        myCanvas.drawBound(selectedRec)
+    }
+
+    override fun showRectangle(rectangleList: MutableList<Rectangle>) {
+        myCanvas.drawRectangle(rectangleList)
+    }
+
     private fun myCanvasInitialize(): MyCanvas {
         return MyCanvas(this, selectedRectangle, object : CanvasTouchListener {
             override fun onTouch(x: Int, y: Int) {
                 canvasPresent.setSelectedRectangle(x, y)
-                showRectangle(Plane.rectangleList)
             }
         })
-    }
-
-    override fun showRectangle(rectangleList: MutableList<Rectangle>) {
-        rectangleList.forEach {
-            Logger.d("${myCanvas.selectedRectangle}")
-            myCanvas.drawRectangle(it)
-        }
-    }
-
-    override fun showSelectedRectangle(_selectedRectangle: Rectangle?) {
-        myCanvas.showSelectedRectangle(_selectedRectangle)
-        selectedRectangle = _selectedRectangle
-
-        selectedRectangle?.let {
-            val hex = String.format("#%02X%02X%02X", it.rgba.r, it.rgba.g, it.rgba.b)
-            binding.rectangleColorButton?.text = hex
-        } ?: run { binding.rectangleButton.text = "null" }
     }
 
     private fun loggerInitialize() {
         Logger.addLogAdapter(AndroidLogAdapter())
     }
-
 }
 
 interface CanvasTouchListener {

@@ -10,8 +10,7 @@ interface CanvasContract {
 
     interface View {
         fun showRectangle(rectangleList: MutableList<Rectangle>)
-        fun showSelectedRectangle(selectedRectangle: Rectangle?)
-        fun setSelectedRec(selectedRec: Rectangle?)
+        fun showSelectedBound(selectedRec: MutableList<Rectangle>)
     }
 
 }

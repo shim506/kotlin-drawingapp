@@ -1,10 +1,8 @@
 package com.example.kotlin_drawingapp.data
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -18,42 +16,41 @@ class MyCanvas(
 ) : View(context) {
 
     var rect: RectF = RectF()
-    private var paint = Paint()
+    private var selectedRectangles = mutableListOf<Rectangle>()
+    private var rectangles = mutableListOf<Rectangle>()
 
-    fun drawRectangle(rec: Rectangle) = with(rec) {
-        val startX = convertDpToPx(point.x)
-        val startY = convertDpToPx(point.y)
-        val width = convertDpToPx(size.width)
-        val height = convertDpToPx(size.height)
+    fun drawRectangle(recList: MutableList<Rectangle>) {
+        rectangles = recList
+        invalidate()
+    }
 
-        if (rec == selectedRectangle) {
-            Logger.d("선택$selectedRectangle")
-            paint.apply {
-                this.style = Paint.Style.STROKE
-                this.color = Color.BLACK
-
-                this.style = Paint.Style.FILL
-                this.color = Color.argb(getAlpha(), rgba.r, rgba.g, rgba.b)
-            }
-        } else {
-            paint.apply {
-                this.style = Paint.Style.FILL
-                this.color = Color.argb(getAlpha(), rgba.r, rgba.g, rgba.b)
-            }
-        }
-        rect = RectF(
-            startX.toFloat(),
-            startY.toFloat(),
-            (startX + width).toFloat(),
-            (startY + height).toFloat()
-        )
+    fun drawBound(recList: MutableList<Rectangle>) {
+        selectedRectangles = recList
         invalidate()
     }
 
     public override fun onDraw(canvas: Canvas?) {
-        canvas?.drawRect(rect, paint)
+        selectedRectangles.forEach {
+            val paint = setBorderPaint(it)
+            rect = createRecF(it)
+            canvas?.drawRect(rect, paint)
+        }
+
+        rectangles.forEach {
+            val paint = setPaint(it)
+            rect = createRecF(it)
+            canvas?.drawRect(rect, paint)
+        }
         super.onDraw(canvas)
     }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        event?.let {
+            listener.onTouch(convertPxToDp(event.x.toInt()), convertPxToDp(event.y.toInt()))
+        }
+        return true
+    }
+
 
     private fun convertDpToPx(value: Int): Int {
         return TypedValue.applyDimension(
@@ -72,51 +69,29 @@ class MyCanvas(
         return (value / density).toInt()
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        event?.let {
-            listener.onTouch(convertPxToDp(event.x.toInt()), convertPxToDp(event.y.toInt()))
-        }
-        return true
+    private fun setBorderPaint(rec: Rectangle): Paint {
+        val paint = Paint()
+        paint.style = Paint.Style.STROKE
+        paint.color = Color.BLACK
+        paint.strokeWidth = 3.0F
+        return paint
     }
 
-    fun showSelectedRectangle(rec: Rectangle?) = with(rec) {
-        removeOldSelectedRectangle()
-        Logger.d(selectedRectangle)
-        selectedRectangle = rec
-        if (rec != null) {
-            val startX = convertDpToPx(this!!.point.x)
-            val startY = convertDpToPx(point.y)
-            val width = convertDpToPx(size.width)
-            val height = convertDpToPx(size.height)
-
-            rect = RectF(
-                startX.toFloat(),
-                startY.toFloat(),
-                (startX + width).toFloat(),
-                (startY + height).toFloat()
-            )
-            paint.apply {
-                this.style = Paint.Style.STROKE
-                this.color = Color.RED
-                this.strokeWidth = 3.0F
-            }
-
-            invalidate()
-        }
+    private fun setPaint(rec: Rectangle): Paint {
+        val paint = Paint()
+        paint.style = Paint.Style.FILL
+        paint.color = Color.argb(rec.getAlpha(), rec.rgba.r, rec.rgba.g, rec.rgba.b)
+        return paint
     }
 
-    private fun removeOldSelectedRectangle() {
-        selectedRectangle?.let {
-            drawRectangle(it)
-        }
+    private fun createRecF(rectangle: Rectangle): RectF {
+        val startX = convertDpToPx(rectangle.point.x).toFloat()
+        val startY = convertDpToPx(rectangle.point.y).toFloat()
+        val width = convertDpToPx(rectangle.size.width).toFloat()
+        val height = convertDpToPx(rectangle.size.height).toFloat()
+
+        return RectF(startX, startY, (startX + width), (startY + height))
     }
 
-    fun changeColor() {
-        selectedRectangle?.let {
-            paint.style = Paint.Style.FILL
-            paint.color = Color.BLACK
-            invalidate()
-        }
-    }
 
 }

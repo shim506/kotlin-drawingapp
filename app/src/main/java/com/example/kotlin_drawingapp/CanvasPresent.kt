@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.kotlin_drawingapp.data.Plane
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
+import com.orhanobut.logger.Logger
 
 private var widthDp: Float = 0F
 private var heightDp: Float = 0F
@@ -19,14 +20,13 @@ class CanvasPresent(private val canvasView: CanvasContract.View) : CanvasContrac
             override fun onEvent(rectangleList: MutableList<Rectangle>) {
                 canvasView.showRectangle(rectangleList)
             }
-
         })
     }
 
     override fun setSelectedRectangle(x: Int, y: Int) {
-        val selectedRec = Plane.setSelectedRectangle(x, y)
-        canvasView.setSelectedRec(selectedRec)
-       // canvasView.showRectangle(Plane.rectangleList)
+        Plane.setSelectedRectangle(x, y)
+        canvasView.showSelectedBound(Plane.selectedRecList)
+
     }
 
 
