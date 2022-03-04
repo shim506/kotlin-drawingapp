@@ -14,12 +14,10 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import java.lang.String
 
-
 class MainActivity : AppCompatActivity(), CanvasContract.View {
     private lateinit var binding: ActivityMainBinding
     lateinit var canvasPresent: Present
     lateinit var myCanvas: MyCanvas
-    var selectedRectangle: Rectangle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +28,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
 
         loggerInitialize()
         addRectangleButtonListening()
+        changeColorButtonListening()
     }
 
     private fun addRectangleButtonListening() {
@@ -37,6 +36,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             myCanvas = myCanvasInitialize()
             binding.canvasContainer?.addView(myCanvas)
             canvasPresent.addRectangle()
+        }
+    }
+
+    private fun changeColorButtonListening() {
+        binding.rectangleColorButton?.setOnClickListener {
+            canvasPresent.changeRectangleColor()
         }
     }
 
@@ -48,8 +53,15 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         myCanvas.drawRectangle(rectangleList)
     }
 
+    override fun showSelectedColor(selectedRec: Rectangle?) {
+        val colorText =
+            selectedRec?.let { String.format("#%02X%02X%02X", it.rgba.r, it.rgba.g, it.rgba.b) }
+                ?: "null"
+        binding.rectangleColorButton?.text = colorText
+    }
+
     private fun myCanvasInitialize(): MyCanvas {
-        return MyCanvas(this, selectedRectangle, object : CanvasTouchListener {
+        return MyCanvas(this, object : CanvasTouchListener {
             override fun onTouch(x: Int, y: Int) {
                 canvasPresent.setSelectedRectangle(x, y)
             }
@@ -60,6 +72,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         Logger.addLogAdapter(AndroidLogAdapter())
     }
 }
+
 
 interface CanvasTouchListener {
     fun onTouch(x: Int, y: Int)

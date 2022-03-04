@@ -11,7 +11,6 @@ import com.orhanobut.logger.Logger
 
 class MyCanvas(
     context: Context,
-    var selectedRectangle: Rectangle?,
     private val listener: CanvasTouchListener
 ) : View(context) {
 

@@ -6,7 +6,7 @@ import com.example.kotlin_drawingapp.PlaneDataAddListener
 object Plane {
     val rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
-    val selectedRec: Rectangle? = null
+    var selectedRec: Rectangle? = null
 
     fun getRectangleCount(): Int {
         return rectangleList.size
@@ -24,12 +24,17 @@ object Plane {
 
     // add가 될 수도 있고 빈공간일 경우 모든 데이터를 지우기에 set prefix
     fun setSelectedRectangle(x: Int, y: Int) {
-        rectangleList.forEach {
-            if (pointInRectangle(it, x, y)) {
-                selectedRecList.add(it)
+        if (rectangleList.none { pointInRectangle(it, x, y) }) {
+            selectedRecList.clear()
+            selectedRec = null
+        } else {
+            rectangleList.forEach {
+                if (pointInRectangle(it, x, y)) {
+                    selectedRecList.add(it)
+                    selectedRec = it
+                }
             }
         }
-        if (rectangleList.none { pointInRectangle(it, x, y) }) selectedRecList.clear()
     }
 
     private fun pointInRectangle(rec: Rectangle, x: Int, y: Int): Boolean {
@@ -41,5 +46,8 @@ object Plane {
         return false
     }
 
+    fun changeSelectedRectangleColor() {
+        selectedRec?.rgba = RectangleFactory().getRandomRgba()
+    }
 
 }

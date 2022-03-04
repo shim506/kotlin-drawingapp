@@ -49,7 +49,7 @@ class RectangleFactory() {
         return rectangle
     }
 
-    private fun getRandomRgba(): Rgba {
+    fun getRandomRgba(): Rgba {
         val r = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
         val g = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
         val b = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()

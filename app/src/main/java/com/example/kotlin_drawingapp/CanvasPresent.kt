@@ -25,8 +25,16 @@ class CanvasPresent(private val canvasView: CanvasContract.View) : CanvasContrac
 
     override fun setSelectedRectangle(x: Int, y: Int) {
         Plane.setSelectedRectangle(x, y)
+        canvasView.showSelectedColor(Plane.selectedRec)
         canvasView.showSelectedBound(Plane.selectedRecList)
+    }
 
+    override fun changeRectangleColor() {
+        Plane.selectedRec?.let {
+            Plane.changeSelectedRectangleColor()
+            canvasView.showRectangle(Plane.rectangleList)
+            canvasView.showSelectedColor(Plane.selectedRec)
+        } ?: kotlin.run { return }
     }
 
 
