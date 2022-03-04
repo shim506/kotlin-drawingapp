@@ -2,7 +2,6 @@ package com.example.kotlin_drawingapp.data
 
 import java.lang.StringBuilder
 
-
 const val RECTANGLE_WIDTH = 150
 const val RECTANGLE_HEIGHT = 120
 const val RGB_MIN_VALUE = 0

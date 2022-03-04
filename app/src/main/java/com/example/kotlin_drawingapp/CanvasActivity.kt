@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     private fun addRectangleButtonListening() {
         binding.rectangleButton.setOnClickListener {
             myCanvas = myCanvasInitialize()
-            binding.canvasContainer?.addView(myCanvas)
+            binding.canvasContainer.addView(myCanvas)
             canvasPresent.addRectangle()
         }
     }
@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             canvasPresent.changeRectangleAlpha(value)
         }
     }
-
 
     override fun showSelectedBound(selectedRec: MutableList<Rectangle>) {
         myCanvas.drawBound(selectedRec)
