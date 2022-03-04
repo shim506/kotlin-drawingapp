@@ -1,7 +1,8 @@
-package com.example.kotlin_drawingapp.data
+package com.example.kotlin_drawingapp.data.model
 
-import android.graphics.Rect
 import com.example.kotlin_drawingapp.PlaneDataAddListener
+import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.RectangleFactory
 
 object Plane {
     val rectangleList = mutableListOf<Rectangle>()

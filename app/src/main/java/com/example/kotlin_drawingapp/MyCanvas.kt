@@ -1,20 +1,18 @@
-package com.example.kotlin_drawingapp.data
+package com.example.kotlin_drawingapp
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import com.example.kotlin_drawingapp.CanvasTouchListener
-import com.orhanobut.logger.Logger
+import com.example.kotlin_drawingapp.data.Rectangle
 
 class MyCanvas(
     context: Context,
     private val listener: CanvasTouchListener
 ) : View(context) {
 
-    var rect: RectF = RectF()
+    private var rect: RectF = RectF()
     private var selectedRectangles = mutableListOf<Rectangle>()
     private var rectangles = mutableListOf<Rectangle>()
 

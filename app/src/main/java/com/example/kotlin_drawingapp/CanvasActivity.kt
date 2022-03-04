@@ -1,13 +1,10 @@
 package com.example.kotlin_drawingapp
 
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
 import com.example.kotlin_drawingapp.CanvasContract.Present
-import com.example.kotlin_drawingapp.data.MyCanvas
-import com.example.kotlin_drawingapp.data.Plane
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
@@ -29,6 +26,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         loggerInitialize()
         addRectangleButtonListening()
         changeColorButtonListening()
+        changeAlphaSliderListening()
     }
 
     private fun addRectangleButtonListening() {
@@ -45,6 +43,13 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         }
     }
 
+    override fun changeAlphaSliderListening() {
+        binding.rectangleAlphaSlider?.addOnChangeListener { slider, value, fromUser ->
+            canvasPresent.changeRectangleAlpha(value)
+        }
+    }
+
+
     override fun showSelectedBound(selectedRec: MutableList<Rectangle>) {
         myCanvas.drawBound(selectedRec)
     }
@@ -57,7 +62,14 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         val colorText =
             selectedRec?.let { String.format("#%02X%02X%02X", it.rgba.r, it.rgba.g, it.rgba.b) }
                 ?: "null"
+
         binding.rectangleColorButton?.text = colorText
+    }
+
+    override fun showSelectedAlpha(selectedRec: Rectangle?) {
+        selectedRec?.let {
+            binding.rectangleAlphaSlider?.value = it.rgba.a.ordinal.toFloat()+1
+        }
     }
 
     private fun myCanvasInitialize(): MyCanvas {
