@@ -1,10 +1,13 @@
 package com.example.kotlin_drawingapp.data.model
 
+import androidx.lifecycle.MutableLiveData
 import com.example.kotlin_drawingapp.PlaneDataAddListener
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
 
 object Plane {
+
+
     val rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
     var selectedRec: Rectangle? = null
