@@ -5,8 +5,16 @@ import com.example.kotlin_drawingapp.data.AlphaEnum
 import com.example.kotlin_drawingapp.data.model.Plane
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
+import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
+import com.example.kotlin_drawingapp.data.repository.RectangleRepository
 
-class CanvasPresenter(private val canvasView: CanvasContract.View) : CanvasContract.Presenter {
+class CanvasPresenter(
+    private val canvasView: CanvasContract.View,
+    private val repository: RectangleRepository
+) : CanvasContract.Presenter {
+    init {
+        LocalTextFileRepository.loadRectangles("url")?.let { Plane.rectangleList = it.toMutableList() }
+    }
 
     override fun addRectangle() {
         val (widthDP, heightDP) = canvasView.getWindowSize()

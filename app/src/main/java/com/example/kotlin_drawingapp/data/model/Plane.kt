@@ -4,13 +4,16 @@ import androidx.lifecycle.MutableLiveData
 import com.example.kotlin_drawingapp.PlaneDataAddListener
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
+import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 
 object Plane {
-
-
-    val rectangleList = mutableListOf<Rectangle>()
+    var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
     var selectedRec: Rectangle? = null
+
+    init {
+
+    }
 
     fun getRectangleCount(): Int {
         return rectangleList.size

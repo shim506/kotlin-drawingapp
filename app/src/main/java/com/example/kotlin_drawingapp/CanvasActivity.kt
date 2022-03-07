@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
 import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        canvasPresenter = CanvasPresenter(this)
+        canvasPresenter = CanvasPresenter(this , LocalTextFileRepository)
 
         loggerInitialize()
         addRectangleButtonListening()
