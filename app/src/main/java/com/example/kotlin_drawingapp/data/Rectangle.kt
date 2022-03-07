@@ -2,7 +2,6 @@ package com.example.kotlin_drawingapp.data
 
 import java.lang.StringBuilder
 
-
 const val RECTANGLE_WIDTH = 150
 const val RECTANGLE_HEIGHT = 120
 const val RGB_MIN_VALUE = 0
@@ -28,7 +27,7 @@ class Rectangle() {
 
 data class Size(val width: Int, val height: Int)
 data class Point(val x: Int, val y: Int)
-data class Rgba(val r: Int, val g: Int, val b: Int, val a: AlphaEnum)
+data class Rgba(var r: Int, var g: Int, var b: Int, var a: AlphaEnum)
 enum class AlphaEnum {
     ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, Ten
 }
@@ -49,7 +48,7 @@ class RectangleFactory() {
         return rectangle
     }
 
-    private fun getRandomRgba(): Rgba {
+    fun getRandomRgba(): Rgba {
         val r = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
         val g = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
         val b = (RGB_MIN_VALUE..RGB_MAX_VALUE).random()
