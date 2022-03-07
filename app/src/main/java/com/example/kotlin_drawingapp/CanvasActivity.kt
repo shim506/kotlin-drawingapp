@@ -1,10 +1,10 @@
 package com.example.kotlin_drawingapp
 
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-
-import com.example.kotlin_drawingapp.CanvasContract.Present
+import com.example.kotlin_drawingapp.CanvasContract.Presenter
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
@@ -13,15 +13,17 @@ import java.lang.String
 
 class MainActivity : AppCompatActivity(), CanvasContract.View {
     private lateinit var binding: ActivityMainBinding
-    lateinit var canvasPresent: Present
+    lateinit var canvasPresenter: Presenter
     lateinit var myCanvas: MyCanvas
+    var canvasSize: Pair<Int, Int> = Pair(0, 0)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        canvasPresent = CanvasPresent(this)
+        canvasPresenter = CanvasPresenter(this)
 
         loggerInitialize()
         addRectangleButtonListening()
@@ -33,19 +35,19 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.rectangleButton.setOnClickListener {
             myCanvas = myCanvasInitialize()
             binding.canvasContainer.addView(myCanvas)
-            canvasPresent.addRectangle()
+            canvasPresenter.addRectangle()
         }
     }
 
     private fun changeColorButtonListening() {
         binding.rectangleColorButton?.setOnClickListener {
-            canvasPresent.changeRectangleColor()
+            canvasPresenter.changeRectangleColor()
         }
     }
 
     override fun changeAlphaSliderListening() {
         binding.rectangleAlphaSlider?.addOnChangeListener { slider, value, fromUser ->
-            canvasPresent.changeRectangleAlpha(value)
+            canvasPresenter.changeRectangleAlpha(value)
         }
     }
 
@@ -61,22 +63,38 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         val colorText =
             selectedRec?.let { String.format("#%02X%02X%02X", it.rgba.r, it.rgba.g, it.rgba.b) }
                 ?: "null"
-
         binding.rectangleColorButton?.text = colorText
     }
 
     override fun showSelectedAlpha(selectedRec: Rectangle?) {
         selectedRec?.let {
-            binding.rectangleAlphaSlider?.value = it.rgba.a.ordinal.toFloat()+1
+            binding.rectangleAlphaSlider?.value = it.rgba.a.ordinal.toFloat() + 1
         }
     }
 
+    override fun getWindowSize(): Pair<Int, Int> {
+//        val metrics = this.resources.displayMetrics
+//        val widthDp = (metrics.widthPixels /
+//                metrics.density)
+//
+//        val heightDp = (metrics.heightPixels /
+//                metrics.density)
+//        return Pair(widthDp.toInt(), heightDp.toInt())
+        return canvasSize
+    }
+
     private fun myCanvasInitialize(): MyCanvas {
-        return MyCanvas(this, object : CanvasTouchListener {
+        val canvasTouchListener = object : CanvasTouchListener {
             override fun onTouch(x: Int, y: Int) {
-                canvasPresent.setSelectedRectangle(x, y)
+                canvasPresenter.setSelectedRectangle(x, y)
             }
-        })
+        }
+        val canvasSizeListener = object : CanvasSizeListener {
+            override fun onMeasure(x: Int, y: Int) {
+                canvasSize = Pair(x, y)
+            }
+        }
+        return MyCanvas(this, canvasTouchListener, canvasSizeListener)
     }
 
     private fun loggerInitialize() {
@@ -84,7 +102,10 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 }
 
-
 interface CanvasTouchListener {
     fun onTouch(x: Int, y: Int)
+}
+
+interface CanvasSizeListener {
+    fun onMeasure(x: Int, y: Int)
 }

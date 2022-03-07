@@ -1,7 +1,10 @@
 package com.example.kotlin_drawingapp
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -9,7 +12,8 @@ import com.example.kotlin_drawingapp.data.Rectangle
 
 class MyCanvas(
     context: Context,
-    private val listener: CanvasTouchListener
+    private val listener: CanvasTouchListener,
+    private val measureListener: CanvasSizeListener
 ) : View(context) {
 
     private var rect: RectF = RectF()
@@ -24,6 +28,13 @@ class MyCanvas(
     fun drawBound(recList: MutableList<Rectangle>) {
         selectedRectangles = recList
         invalidate()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val widthSize = convertPxToDp(MeasureSpec.getSize(widthMeasureSpec))
+        val heightSize = convertPxToDp(MeasureSpec.getSize(heightMeasureSpec))
+        measureListener.onMeasure(widthSize, heightSize)
     }
 
     public override fun onDraw(canvas: Canvas?) {
