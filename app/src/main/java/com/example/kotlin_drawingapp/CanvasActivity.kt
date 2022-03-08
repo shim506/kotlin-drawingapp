@@ -42,15 +42,20 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
 
         loggerInitialize()
+        attachCanvas()
+
         addRectangleButtonListening()
         addImageButtonListening()
-
         changeColorButtonListening()
         changeAlphaSliderListening()
+    }
+
+    private fun attachCanvas() {
+        myCanvas = myCanvasInitialize()
+        binding.canvasContainer.addView(myCanvas)
     }
 
     private fun addImageButtonListening() {
@@ -58,19 +63,26 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == RESULT_OK) {
                     val uri = it.data?.data as Uri
-                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        val source = ImageDecoder.createSource(this.contentResolver, uri)
-                        ImageDecoder.decodeBitmap(source)
-                    } else {
-                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
-                    }
-                canvasPresenter.addImageRectangle(bitmap)
+                    val bitmap = getBitmapWithUri(uri)
+
+                    myCanvas = myCanvasInitialize()
+                    binding.canvasContainer.addView(myCanvas)
+                    canvasPresenter.addImageRectangle(bitmap)
                 }
             }
         binding.imageAddButton?.setOnClickListener {
             intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
             getResult.launch(intent)
+        }
+    }
+
+    private fun getBitmapWithUri(uri: Uri): Bitmap {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val source = ImageDecoder.createSource(this.contentResolver, uri)
+            ImageDecoder.decodeBitmap(source)
+        } else {
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
         }
     }
 
@@ -88,7 +100,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         }
     }
 
-    override fun changeAlphaSliderListening() {
+    private fun changeAlphaSliderListening() {
         binding.rectangleAlphaSlider?.addOnChangeListener { slider, value, fromUser ->
             canvasPresenter.changeRectangleAlpha(value)
         }
@@ -100,6 +112,10 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
 
     override fun showRectangle(rectangleList: MutableList<Rectangle>) {
         myCanvas.drawRectangle(rectangleList)
+    }
+
+    override fun showImages(pictureList: MutableList<Picture>) {
+        myCanvas.drawImage(pictureList)
     }
 
     override fun showSelectedColor(selectedRec: Rectangle?) {

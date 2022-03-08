@@ -1,6 +1,7 @@
 package com.example.kotlin_drawingapp
 
 import android.graphics.Bitmap
+import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Rectangle
 
 interface CanvasContract {
@@ -14,11 +15,12 @@ interface CanvasContract {
 
     interface View {
         fun showRectangle(rectangleList: MutableList<Rectangle>)
+        fun showImages(pictureList: MutableList<Picture>)
         fun showSelectedBound(selectedRecList: MutableList<Rectangle>)
         fun showSelectedColor(selectedRec: Rectangle?)
-        fun changeAlphaSliderListening()
         fun showSelectedAlpha(selectedRec: Rectangle?)
         fun getWindowSize(): Pair<Int, Int>
+
     }
 
 }

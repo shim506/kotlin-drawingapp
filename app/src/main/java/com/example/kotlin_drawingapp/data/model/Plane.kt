@@ -1,12 +1,9 @@
 package com.example.kotlin_drawingapp.data.model
 
-import android.graphics.Bitmap
-import android.graphics.Picture
-import androidx.lifecycle.MutableLiveData
-import com.example.kotlin_drawingapp.PlaneDataAddListener
+import com.example.kotlin_drawingapp.PlaneImageAddListener
+import com.example.kotlin_drawingapp.PlaneRectangleAddListener
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
-import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 
 object Plane {
     var rectangleList = mutableListOf<Rectangle>()
@@ -23,13 +20,17 @@ object Plane {
         return null
     }
 
-    fun addRectangle(rectangle: Rectangle, addListener: PlaneDataAddListener) {
+    fun addRectangle(rectangle: Rectangle, addListener: PlaneRectangleAddListener) {
         rectangleList.add(rectangle)
         addListener.onEvent(rectangleList)
     }
 
-    fun addImageRectangle(picture: com.example.kotlin_drawingapp.data.Picture) {
+    fun addImageRectangle(
+        picture: com.example.kotlin_drawingapp.data.Picture,
+        addListener: PlaneImageAddListener
+    ) {
         pictureList.add(picture)
+        addListener.onEvent(pictureList)
     }
 
     // add가 될 수도 있고 빈공간일 경우 모든 데이터를 지우기에 set prefix
