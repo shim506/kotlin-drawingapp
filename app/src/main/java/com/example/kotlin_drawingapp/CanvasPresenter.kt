@@ -29,12 +29,15 @@ class CanvasPresenter(
     override fun addImageRectangle(bitmap: Bitmap) {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        Plane.addImageRectangle(Picture(stream.toByteArray(), createRectangle()) , object :PlaneImageAddListener{
-            override fun onEvent(pictureList: MutableList<Picture>) {
-                canvasView.showImages(pictureList)
-            }
-        })
+        Plane.addImageRectangle(
+            Picture(stream.toByteArray(), createImageRectangle()),
+            object : PlaneImageAddListener {
+                override fun onEvent(pictureList: MutableList<Picture>) {
+                    canvasView.showImages(pictureList)
+                }
+            })
     }
+
 
     override fun setSelectedRectangle(x: Int, y: Int) {
         Plane.setSelectedRectangle(x, y)
@@ -64,6 +67,15 @@ class CanvasPresenter(
         val (widthDP, heightDP) = canvasView.getWindowSize()
         return RectangleFactory().createRectangle(widthDP.toFloat(), heightDP.toFloat())
     }
+
+    private fun createImageRectangle(): Rectangle {
+        val rec = createRectangle()
+        rec.rgba.r = -1
+        rec.rgba.g = -1
+        rec.rgba.b = -1
+        return rec
+    }
+
 }
 
 interface PlaneRectangleAddListener {

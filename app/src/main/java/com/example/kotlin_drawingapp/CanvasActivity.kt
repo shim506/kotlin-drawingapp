@@ -120,8 +120,17 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
 
     override fun showSelectedColor(selectedRec: Rectangle?) {
         val colorText =
-            selectedRec?.let { String.format("#%02X%02X%02X", it.rgba.r, it.rgba.g, it.rgba.b) }
-                ?: "null"
+            selectedRec?.let {
+                with(selectedRec.rgba) {
+                    if (this.r != -1) String.format(
+                        "#%02X%02X%02X",
+                        this.r,
+                        this.g,
+                        this.b
+                    ) else "null"
+                }
+            } ?: "null"
+
         binding.rectangleColorButton?.text = colorText
     }
 

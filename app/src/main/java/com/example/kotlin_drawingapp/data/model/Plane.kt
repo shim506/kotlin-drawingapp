@@ -35,17 +35,26 @@ object Plane {
 
     // add가 될 수도 있고 빈공간일 경우 모든 데이터를 지우기에 set prefix
     fun setSelectedRectangle(x: Int, y: Int) {
-        if (rectangleList.none { pointInRectangle(it, x, y) }) {
+        val allRectangleList = mutableListOf<Rectangle>()
+        allRectangleList.addAll(rectangleList)
+        allRectangleList.addAll(pictureList.map { it.rec })
+
+        if (existRecOrPic(x, y, allRectangleList)) {
             selectedRecList.clear()
             selectedRec = null
         } else {
-            rectangleList.forEach {
+            allRectangleList.forEach {
                 if (pointInRectangle(it, x, y)) {
                     selectedRecList.add(it)
                     selectedRec = it
+                    return
                 }
             }
         }
+    }
+
+    private fun existRecOrPic(x: Int, y: Int, allList: MutableList<Rectangle>): Boolean {
+        return allList.none { pointInRectangle(it, x, y) }
     }
 
     private fun pointInRectangle(rec: Rectangle, x: Int, y: Int): Boolean {
