@@ -9,7 +9,7 @@ const val RGB_MAX_VALUE = 255
 const val ALPHA_MIN_VALUE = 1
 const val ALPHA_MAX_VALUE = 10
 
-class Rectangle() {
+class Rectangle() : Box() {
     var num = -1
     lateinit var id: String
     lateinit var size: Size

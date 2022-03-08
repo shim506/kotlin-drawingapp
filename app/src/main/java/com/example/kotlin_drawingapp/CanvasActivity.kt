@@ -1,15 +1,34 @@
 package com.example.kotlin_drawingapp
 
 
+import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PackageManagerCompat
+import androidx.core.graphics.decodeBitmap
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
+import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import java.io.BufferedInputStream
+import java.io.FileInputStream
 import java.lang.String
 
 class MainActivity : AppCompatActivity(), CanvasContract.View {
@@ -24,12 +43,35 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        canvasPresenter = CanvasPresenter(this , LocalTextFileRepository)
+        canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
 
         loggerInitialize()
         addRectangleButtonListening()
+        addImageButtonListening()
+
         changeColorButtonListening()
         changeAlphaSliderListening()
+    }
+
+    private fun addImageButtonListening() {
+        val getResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val uri = it.data?.data as Uri
+                    val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        val source = ImageDecoder.createSource(this.contentResolver, uri)
+                        ImageDecoder.decodeBitmap(source)
+                    } else {
+                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    }
+                canvasPresenter.addImageRectangle(bitmap)
+                }
+            }
+        binding.imageAddButton?.setOnClickListener {
+            intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            getResult.launch(intent)
+        }
     }
 
     private fun addRectangleButtonListening() {
@@ -74,13 +116,6 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 
     override fun getWindowSize(): Pair<Int, Int> {
-//        val metrics = this.resources.displayMetrics
-//        val widthDp = (metrics.widthPixels /
-//                metrics.density)
-//
-//        val heightDp = (metrics.heightPixels /
-//                metrics.density)
-//        return Pair(widthDp.toInt(), heightDp.toInt())
         return canvasSize
     }
 

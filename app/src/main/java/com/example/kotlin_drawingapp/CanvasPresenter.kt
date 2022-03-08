@@ -1,12 +1,13 @@
 package com.example.kotlin_drawingapp
 
-import android.content.Context
+import android.graphics.Bitmap
 import com.example.kotlin_drawingapp.data.AlphaEnum
+import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.model.Plane
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
-import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
+import java.io.ByteArrayOutputStream
 
 class CanvasPresenter(
     private val canvasView: CanvasContract.View,
@@ -17,13 +18,18 @@ class CanvasPresenter(
     }
 
     override fun addRectangle() {
-        val (widthDP, heightDP) = canvasView.getWindowSize()
-        val rect = RectangleFactory().createRectangle(widthDP.toFloat(), heightDP.toFloat())
+        val rect = createRectangle()
         Plane.addRectangle(rect, object : PlaneDataAddListener {
             override fun onEvent(rectangleList: MutableList<Rectangle>) {
                 canvasView.showRectangle(rectangleList)
             }
         })
+    }
+
+    override fun addImageRectangle(bitmap: Bitmap) {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        Plane.addImageRectangle(Picture(stream.toByteArray(), createRectangle()))
     }
 
     override fun setSelectedRectangle(x: Int, y: Int) {
@@ -50,6 +56,10 @@ class CanvasPresenter(
         } ?: kotlin.run { return }
     }
 
+    private fun createRectangle(): Rectangle {
+        val (widthDP, heightDP) = canvasView.getWindowSize()
+        return RectangleFactory().createRectangle(widthDP.toFloat(), heightDP.toFloat())
+    }
 }
 
 interface PlaneDataAddListener {

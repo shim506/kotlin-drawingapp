@@ -1,5 +1,7 @@
 package com.example.kotlin_drawingapp.data.model
 
+import android.graphics.Bitmap
+import android.graphics.Picture
 import androidx.lifecycle.MutableLiveData
 import com.example.kotlin_drawingapp.PlaneDataAddListener
 import com.example.kotlin_drawingapp.data.Rectangle
@@ -10,10 +12,7 @@ object Plane {
     var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
     var selectedRec: Rectangle? = null
-
-    init {
-
-    }
+    val pictureList = mutableListOf<com.example.kotlin_drawingapp.data.Picture>()
 
     fun getRectangleCount(): Int {
         return rectangleList.size
@@ -27,6 +26,10 @@ object Plane {
     fun addRectangle(rectangle: Rectangle, addListener: PlaneDataAddListener) {
         rectangleList.add(rectangle)
         addListener.onEvent(rectangleList)
+    }
+
+    fun addImageRectangle(picture: com.example.kotlin_drawingapp.data.Picture) {
+        pictureList.add(picture)
     }
 
     // add가 될 수도 있고 빈공간일 경우 모든 데이터를 지우기에 set prefix
@@ -56,5 +59,6 @@ object Plane {
     fun changeSelectedRectangleColor() {
         selectedRec?.rgba = RectangleFactory().getRandomRgba()
     }
+
 
 }

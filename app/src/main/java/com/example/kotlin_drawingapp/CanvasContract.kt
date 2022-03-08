@@ -1,5 +1,6 @@
 package com.example.kotlin_drawingapp
 
+import android.graphics.Bitmap
 import com.example.kotlin_drawingapp.data.Rectangle
 
 interface CanvasContract {
@@ -8,6 +9,7 @@ interface CanvasContract {
         fun setSelectedRectangle(x: Int, y: Int)
         fun changeRectangleColor()
         fun changeRectangleAlpha(value: Float)
+        fun addImageRectangle(bitmap: Bitmap)
     }
 
     interface View {
