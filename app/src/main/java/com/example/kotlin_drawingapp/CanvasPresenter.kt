@@ -13,7 +13,7 @@ class CanvasPresenter(
     private val repository: RectangleRepository
 ) : CanvasContract.Presenter {
     init {
-        LocalTextFileRepository.loadRectangles("url")?.let { Plane.rectangleList = it.toMutableList() }
+        repository.loadRectangles("url")?.let { Plane.rectangleList = it.toMutableList() }
     }
 
     override fun addRectangle() {
