@@ -13,7 +13,9 @@
         android:layout_height="match_parent"
         app:layout_constraintEnd_toStartOf="@+id/menu_layout"
         app:layout_constraintHorizontal_weight="8"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout"
@@ -82,14 +84,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/rectangle_button" />
-
-    <ImageView
-        android:id="@+id/content_image"
-        android:layout_width="210dp"
-        android:layout_height="210dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/menu_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
