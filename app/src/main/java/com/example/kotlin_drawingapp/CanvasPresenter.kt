@@ -1,12 +1,11 @@
 package com.example.kotlin_drawingapp
 
 import android.graphics.Bitmap
-import com.example.kotlin_drawingapp.data.AlphaEnum
-import com.example.kotlin_drawingapp.data.Picture
+import android.util.Log
+import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.Plane
-import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.RectangleFactory
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
+import com.orhanobut.logger.Logger
 import java.io.ByteArrayOutputStream
 
 class CanvasPresenter(
@@ -21,7 +20,7 @@ class CanvasPresenter(
         val rect = createRectangle()
         Plane.addRectangle(rect, object : PlaneRectangleAddListener {
             override fun onEvent(rectangleList: MutableList<Rectangle>) {
-                canvasView.showRectangle(rectangleList)
+                canvasView.showAll(Plane.rectangleList , Plane.pictureList , Plane.selectedRecList)
             }
         })
     }
@@ -33,15 +32,27 @@ class CanvasPresenter(
             Picture(stream.toByteArray(), createImageRectangle()),
             object : PlaneImageAddListener {
                 override fun onEvent(pictureList: MutableList<Picture>) {
-                    canvasView.showImages(pictureList)
+                   canvasView.showAll(Plane.rectangleList , Plane.pictureList , Plane.selectedRecList)
                 }
             })
     }
 
+    override fun getSelectedRectangle(): Rectangle? {
+        return Plane.selectedRec
+    }
+
+    override fun getSelectedPicture(): Picture? {
+        return Plane.selectedPicture
+    }
+
+    override fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
+        Plane.moveRectangle(rectangle, x, y)
+        canvasView.showAll(Plane.rectangleList , Plane.pictureList , Plane.selectedRecList)
+    }
 
     override fun setSelectedRectangle(x: Int, y: Int) {
         Plane.setSelectedRectangle(x, y)
-        canvasView.showSelectedColor(Plane.selectedRec)
+        Plane.selectedPicture ?: canvasView.showSelectedColor(Plane.selectedRec)
         canvasView.showSelectedAlpha(Plane.selectedRec)
         canvasView.showSelectedBound(Plane.selectedRecList)
     }

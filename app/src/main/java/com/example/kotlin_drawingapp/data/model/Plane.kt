@@ -2,6 +2,8 @@ package com.example.kotlin_drawingapp.data.model
 
 import com.example.kotlin_drawingapp.PlaneImageAddListener
 import com.example.kotlin_drawingapp.PlaneRectangleAddListener
+import com.example.kotlin_drawingapp.data.Picture
+import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
 
@@ -9,6 +11,7 @@ object Plane {
     var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
     var selectedRec: Rectangle? = null
+    var selectedPicture: Picture? = null
     val pictureList = mutableListOf<com.example.kotlin_drawingapp.data.Picture>()
 
     fun getRectangleCount(): Int {
@@ -43,10 +46,19 @@ object Plane {
             selectedRecList.clear()
             selectedRec = null
         } else {
-            allRectangleList.forEach {
+            rectangleList.forEach {
                 if (pointInRectangle(it, x, y)) {
                     selectedRecList.add(it)
                     selectedRec = it
+                    selectedPicture = null
+                    return
+                }
+            }
+            pictureList.forEach {
+                if (pointInRectangle(it.rec, x, y)) {
+                    selectedRecList.add(it.rec)
+                    selectedRec = it.rec
+                    selectedPicture = it
                     return
                 }
             }
@@ -68,6 +80,10 @@ object Plane {
 
     fun changeSelectedRectangleColor() {
         selectedRec?.rgba = RectangleFactory().getRandomRgba()
+    }
+
+    fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
+        rectangle?.point = Point(x, y)
     }
 
 
