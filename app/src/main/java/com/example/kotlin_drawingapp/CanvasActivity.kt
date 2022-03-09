@@ -52,9 +52,8 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         val getResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == RESULT_OK) {
-                    val uri = it.data?.data as Uri
-                    val bitmap = getBitmapWithUri(uri)
-                    canvasPresenter.addImageRectangle(bitmap)
+                    val uri: Uri = it.data?.data as Uri
+                    canvasPresenter.addImageRectangleWithUri(uri)
                 }
             }
         binding.imageAddButton?.setOnClickListener {
@@ -105,15 +104,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.canvasContainer.addView(myCanvas)
     }
 
-    override fun showSelectedColor(selectedRec: Rectangle?) {
-        val colorText =
-            selectedRec?.let {
-                with(selectedRec.rgba) {
-                    if (this.r != -1) {
-                        String.format("#%02X%02X%02X", this.r, this.g, this.b)
-                    } else "null"
-                }
-            } ?: "null"
+    override fun showSelectedColor(colorText: kotlin.String) {
         binding.rectangleColorButton?.text = colorText
     }
 
@@ -133,46 +124,35 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
                 canvasSize = Pair(x, y)
             }
         }
-        val canvasTouchDownListener = object : CanvasTouchDownListener {
+        val canvasTouchListener = object : CanvasTouchListener {
             override fun onTouchDown(dpX: Int, dpY: Int) {
                 canvasPresenter.setSelectedRectangle(dpX, dpY)
                 tempCanvas =
                     TempCanvas(applicationContext, canvasPresenter.getSelectedRectangle(), dpX, dpY)
                 binding.canvasContainer.addView(tempCanvas)
             }
-        }
-        val canvasTouchMoveListener = object : CanvasTouchMoveListener {
+
             override fun onMove(x: Int, y: Int) {
                 canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPic(x, y, it) }
                     ?: kotlin.run {
                         tempCanvas.drawTempRec(x, y)
                     }
             }
-        }
-        val canvasTouchUpListener = object : CanvasTouchUpListener {
+
             override fun onTouchUP(pxX: Int, pxY: Int) {
                 binding.canvasContainer.removeView(tempCanvas)
                 val tempPos = tempCanvas.getTempPosPx(pxX, pxY)
-                val movedPos = Pair(tempCanvas.convertPxToDp(tempPos.x) ,tempCanvas.convertPxToDp(tempPos.y) )
+                val movedPos =
+                    Pair(tempCanvas.convertPxToDp(tempPos.x), tempCanvas.convertPxToDp(tempPos.y))
                 canvasPresenter.moveRectangle(tempCanvas.rectangle, movedPos.first, movedPos.second)
             }
+
         }
         return MyCanvas(
             this,
-            canvasTouchDownListener,
-            canvasSizeListener,
-            canvasTouchMoveListener,
-            canvasTouchUpListener
+            canvasTouchListener,
+            canvasSizeListener
         )
-    }
-
-    private fun getBitmapWithUri(uri: Uri): Bitmap {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val source = ImageDecoder.createSource(this.contentResolver, uri)
-            ImageDecoder.decodeBitmap(source)
-        } else {
-            MediaStore.Images.Media.getBitmap(contentResolver, uri)
-        }
     }
 
     private fun loggerInitialize() {
@@ -180,18 +160,13 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 }
 
-interface CanvasTouchDownListener {
+interface CanvasTouchListener {
     fun onTouchDown(x: Int, y: Int)
+    fun onMove(x: Int, y: Int)
+    fun onTouchUP(x: Int, y: Int)
 }
 
 interface CanvasSizeListener {
     fun onMeasure(x: Int, y: Int)
 }
 
-interface CanvasTouchMoveListener {
-    fun onMove(x: Int, y: Int)
-}
-
-interface CanvasTouchUpListener {
-    fun onTouchUP(x: Int, y: Int)
-}

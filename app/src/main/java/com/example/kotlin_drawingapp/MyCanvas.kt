@@ -12,11 +12,11 @@ import com.example.kotlin_drawingapp.data.Size
 
 class MyCanvas(
     context: Context,
-    private val listener: CanvasTouchDownListener,
+    private val touchListener: CanvasTouchListener,
     private val measureListener: CanvasSizeListener,
-    private val touchMoveListener: CanvasTouchMoveListener,
-    private val touchUPListener: CanvasTouchUpListener
-) : BaseCanvas(context) {
+
+    ) : BaseCanvas(context) {
+
 
     private var rect: RectF = RectF()
     private var selectedRectangles = mutableListOf<Rectangle>()
@@ -94,17 +94,17 @@ class MyCanvas(
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 event?.let {
-                    listener.onTouchDown(
+                    touchListener.onTouchDown(
                         convertPxToDp(event.x.toInt()),
                         convertPxToDp(event.y.toInt())
                     )
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                touchMoveListener.onMove(event.x.toInt(), event.y.toInt())
+                touchListener.onMove(event.x.toInt(), event.y.toInt())
             }
             MotionEvent.ACTION_UP -> {
-                touchUPListener.onTouchUP(event.x.toInt(), event.y.toInt())
+                touchListener.onTouchUP(event.x.toInt(), event.y.toInt())
             }
         }
         return true
