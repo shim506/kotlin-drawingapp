@@ -1,4 +1,4 @@
-package com.example.kotlin_drawingapp
+package com.example.kotlin_drawingapp.customView
 
 import android.content.Context
 import android.graphics.Bitmap
