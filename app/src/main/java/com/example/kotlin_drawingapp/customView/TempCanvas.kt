@@ -1,13 +1,10 @@
-package com.example.kotlin_drawingapp
+package com.example.kotlin_drawingapp.customView
 
 import android.content.Context
 import android.graphics.*
-import android.util.TypedValue
-import android.view.View
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
-import com.orhanobut.logger.Logger
 
 const val ALPHA_VALUE = 0.5F
 

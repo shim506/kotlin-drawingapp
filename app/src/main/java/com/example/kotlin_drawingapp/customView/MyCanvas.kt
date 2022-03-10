@@ -1,13 +1,12 @@
-package com.example.kotlin_drawingapp
+package com.example.kotlin_drawingapp.customView
 
 import android.content.Context
 import android.graphics.*
-import android.util.TypedValue
 import android.view.MotionEvent
-import android.view.View
+import com.example.kotlin_drawingapp.CanvasSizeListener
+import com.example.kotlin_drawingapp.CanvasTouchListener
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.Size
 
 
 class MyCanvas(

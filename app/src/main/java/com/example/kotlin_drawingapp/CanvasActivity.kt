@@ -1,25 +1,19 @@
 package com.example.kotlin_drawingapp
 
-
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.contains
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
+import com.example.kotlin_drawingapp.customView.MyCanvas
+import com.example.kotlin_drawingapp.customView.TempCanvas
 import com.example.kotlin_drawingapp.data.Picture
-import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
-import java.lang.String
 
 class MainActivity : AppCompatActivity(), CanvasContract.View {
     private lateinit var binding: ActivityMainBinding
@@ -41,7 +35,10 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         addImageButtonListening()
         changeColorButtonListening()
         changeAlphaSliderListening()
+
+        attrUpDownButtonListening()
     }
+
 
     private fun attachCanvas() {
         myCanvas = myCanvasInitialize()
@@ -153,6 +150,43 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             canvasTouchListener,
             canvasSizeListener
         )
+    }
+
+    private fun attrUpDownButtonListening() {
+        with(binding) {
+            // x 좌표 변화
+            posXUpDownView?.upButton?.setOnClickListener {
+
+            }
+            posXUpDownView?.downButton?.setOnClickListener {
+
+            }
+
+            //  y 좌표 변화
+            posYUpDownView?.upButton?.setOnClickListener {
+
+            }
+            posYUpDownView?.downButton?.setOnClickListener {
+
+            }
+
+
+            //  너비 변화
+            sizeWidthUpDownView?.upButton?.setOnClickListener {
+
+            }
+            sizeWidthUpDownView?.downButton?.setOnClickListener {
+
+            }
+
+            //  높이 변화
+            sizeHeightUpDownView?.upButton?.setOnClickListener {
+
+            }
+            sizeHeightUpDownView?.downButton?.setOnClickListener {
+
+            }
+        }
     }
 
     private fun loggerInitialize() {
