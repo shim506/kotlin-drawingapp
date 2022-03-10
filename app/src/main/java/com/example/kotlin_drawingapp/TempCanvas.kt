@@ -2,12 +2,9 @@ package com.example.kotlin_drawingapp
 
 import android.content.Context
 import android.graphics.*
-import android.util.TypedValue
-import android.view.View
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
-import com.orhanobut.logger.Logger
 
 const val ALPHA_VALUE = 0.5F
 
@@ -25,7 +22,7 @@ class TempCanvas(
     private var touchY = convertPxToDp(dpClickY)
 
 
-    fun drawTempRec(pxX: Int, pxY: Int) {
+    fun drawTempRectangle(pxX: Int, pxY: Int) {
         isPicture = false
         val (startX, startY) = getTempPosPx(pxX, pxY)
         rectangle?.let {
@@ -36,7 +33,7 @@ class TempCanvas(
         }
     }
 
-    fun drawTempPic(x: Int, y: Int, picture: Picture) {
+    fun drawTempPicture(x: Int, y: Int, picture: Picture) {
         isPicture = true
         touchX = x
         touchY = y

@@ -6,11 +6,9 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.Plane
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
-import com.orhanobut.logger.Logger
 import java.io.ByteArrayOutputStream
 
 class CanvasPresenter(

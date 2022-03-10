@@ -2,24 +2,17 @@ package com.example.kotlin_drawingapp
 
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.contains
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
 import com.example.kotlin_drawingapp.data.Picture
-import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
-import java.lang.String
 
 class MainActivity : AppCompatActivity(), CanvasContract.View {
     private lateinit var binding: ActivityMainBinding
@@ -133,9 +126,9 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             }
 
             override fun onMove(x: Int, y: Int) {
-                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPic(x, y, it) }
+                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPicture(x, y, it) }
                     ?: kotlin.run {
-                        tempCanvas.drawTempRec(x, y)
+                        tempCanvas.drawTempRectangle(x, y)
                     }
             }
 
