@@ -6,6 +6,10 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
+import com.example.kotlin_drawingapp.changeAttr.HeightChange
+import com.example.kotlin_drawingapp.changeAttr.HorizontalChange
+import com.example.kotlin_drawingapp.changeAttr.VerticalChange
+import com.example.kotlin_drawingapp.changeAttr.WidthChange
 import com.example.kotlin_drawingapp.customView.MyCanvas
 import com.example.kotlin_drawingapp.customView.TempCanvas
 import com.example.kotlin_drawingapp.data.Picture
@@ -36,6 +40,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         changeColorButtonListening()
         changeAlphaSliderListening()
 
+        attrUpDownButtonInitialize()
         attrUpDownButtonListening()
     }
 
@@ -115,6 +120,13 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         return canvasSize
     }
 
+    override fun showSelectedAttribute(selectedRec: Rectangle?) {
+        binding.posXUpDownView?.value?.text = (selectedRec?.point?.x).toString()
+        binding.posYUpDownView?.value?.text = (selectedRec?.point?.y).toString()
+        binding.sizeWidthUpDownView?.value?.text = (selectedRec?.size?.width).toString()
+        binding.sizeHeightUpDownView?.value?.text = (selectedRec?.size?.height).toString()
+    }
+
     private fun myCanvasInitialize(): MyCanvas {
         val canvasSizeListener = object : CanvasSizeListener {
             override fun onMeasure(x: Int, y: Int) {
@@ -152,39 +164,45 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         )
     }
 
+    private fun attrUpDownButtonInitialize() {
+        binding.posXUpDownView?.attr?.text = "X"
+        binding.posYUpDownView?.attr?.text = "Y"
+        binding.sizeWidthUpDownView?.attr?.text = "W"
+        binding.sizeHeightUpDownView?.attr?.text = "H"
+    }
+
     private fun attrUpDownButtonListening() {
         with(binding) {
             // x 좌표 변화
             posXUpDownView?.upButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(HorizontalChange(1))
             }
             posXUpDownView?.downButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(HorizontalChange(-1))
             }
 
             //  y 좌표 변화
             posYUpDownView?.upButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(VerticalChange(1))
             }
             posYUpDownView?.downButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(VerticalChange(-1))
             }
-
 
             //  너비 변화
             sizeWidthUpDownView?.upButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(WidthChange(1))
             }
             sizeWidthUpDownView?.downButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(WidthChange(-1))
             }
 
             //  높이 변화
             sizeHeightUpDownView?.upButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(HeightChange(1))
             }
             sizeHeightUpDownView?.downButton?.setOnClickListener {
-
+                canvasPresenter.changeRectangleAttribute(HeightChange(-1))
             }
         }
     }
