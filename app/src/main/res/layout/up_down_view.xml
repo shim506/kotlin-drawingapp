@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="15dp"
         android:gravity="center_vertical"
-        android:text="210"
+        android:text="0"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/attr" />
 

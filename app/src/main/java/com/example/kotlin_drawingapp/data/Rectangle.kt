@@ -25,8 +25,8 @@ class Rectangle() {
     }
 }
 
-data class Size(val width: Int, val height: Int)
-data class Point(val x: Int, val y: Int)
+data class Size(var width: Int, var height: Int)
+data class Point(var x: Int, var y: Int)
 data class Rgba(var r: Int, var g: Int, var b: Int, var a: AlphaEnum)
 
 enum class AlphaEnum {
