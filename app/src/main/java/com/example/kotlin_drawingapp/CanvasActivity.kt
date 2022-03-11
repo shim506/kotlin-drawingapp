@@ -1,51 +1,76 @@
 package com.example.kotlin_drawingapp
 
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-
-import com.example.kotlin_drawingapp.CanvasContract.Present
+import com.example.kotlin_drawingapp.CanvasContract.Presenter
+import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
-import java.lang.String
 
 class MainActivity : AppCompatActivity(), CanvasContract.View {
     private lateinit var binding: ActivityMainBinding
-    lateinit var canvasPresent: Present
+    lateinit var canvasPresenter: Presenter
     lateinit var myCanvas: MyCanvas
+    lateinit var tempCanvas: TempCanvas
+    var canvasSize: Pair<Int, Int> = Pair(0, 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        canvasPresent = CanvasPresent(this)
+        canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
 
         loggerInitialize()
+        attachCanvas()
+
         addRectangleButtonListening()
+        addImageButtonListening()
         changeColorButtonListening()
         changeAlphaSliderListening()
     }
 
+    private fun attachCanvas() {
+        myCanvas = myCanvasInitialize()
+        binding.canvasContainer.addView(myCanvas)
+    }
+
+    private fun addImageButtonListening() {
+        val getResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val uri: Uri = it.data?.data as Uri
+                    canvasPresenter.addImageRectangleWithUri(uri)
+                }
+            }
+        binding.imageAddButton?.setOnClickListener {
+            intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            getResult.launch(intent)
+        }
+    }
+
     private fun addRectangleButtonListening() {
         binding.rectangleButton.setOnClickListener {
-            myCanvas = myCanvasInitialize()
-            binding.canvasContainer.addView(myCanvas)
-            canvasPresent.addRectangle()
+            canvasPresenter.addRectangle()
         }
     }
 
     private fun changeColorButtonListening() {
         binding.rectangleColorButton?.setOnClickListener {
-            canvasPresent.changeRectangleColor()
+            canvasPresenter.changeRectangleColor()
         }
     }
 
-    override fun changeAlphaSliderListening() {
+    private fun changeAlphaSliderListening() {
         binding.rectangleAlphaSlider?.addOnChangeListener { slider, value, fromUser ->
-            canvasPresent.changeRectangleAlpha(value)
+            canvasPresenter.changeRectangleAlpha(value)
         }
     }
 
@@ -57,26 +82,70 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         myCanvas.drawRectangle(rectangleList)
     }
 
-    override fun showSelectedColor(selectedRec: Rectangle?) {
-        val colorText =
-            selectedRec?.let { String.format("#%02X%02X%02X", it.rgba.r, it.rgba.g, it.rgba.b) }
-                ?: "null"
+    override fun showImages(pictureList: MutableList<Picture>) {
+        myCanvas.drawImage(pictureList)
+    }
 
+    override fun showAll(
+        rectangleList: MutableList<Rectangle>,
+        pictureList: MutableList<Picture>,
+        selectedRecList: MutableList<Rectangle>
+    ) {
+        binding.canvasContainer.removeView(myCanvas)
+        myCanvas = myCanvasInitialize()
+        myCanvas.drawAll(rectangleList, pictureList, selectedRecList)
+        binding.canvasContainer.addView(myCanvas)
+    }
+
+    override fun showSelectedColor(colorText: kotlin.String) {
         binding.rectangleColorButton?.text = colorText
     }
 
     override fun showSelectedAlpha(selectedRec: Rectangle?) {
         selectedRec?.let {
-            binding.rectangleAlphaSlider?.value = it.rgba.a.ordinal.toFloat()+1
+            binding.rectangleAlphaSlider?.value = it.rgba.a.ordinal.toFloat() + 1
         }
     }
 
+    override fun getWindowSize(): Pair<Int, Int> {
+        return canvasSize
+    }
+
     private fun myCanvasInitialize(): MyCanvas {
-        return MyCanvas(this, object : CanvasTouchListener {
-            override fun onTouch(x: Int, y: Int) {
-                canvasPresent.setSelectedRectangle(x, y)
+        val canvasSizeListener = object : CanvasSizeListener {
+            override fun onMeasure(x: Int, y: Int) {
+                canvasSize = Pair(x, y)
             }
-        })
+        }
+        val canvasTouchListener = object : CanvasTouchListener {
+            override fun onTouchDown(dpX: Int, dpY: Int) {
+                canvasPresenter.setSelectedRectangle(dpX, dpY)
+                tempCanvas =
+                    TempCanvas(applicationContext, canvasPresenter.getSelectedRectangle(), dpX, dpY)
+                binding.canvasContainer.addView(tempCanvas)
+            }
+
+            override fun onMove(x: Int, y: Int) {
+                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPicture(x, y, it) }
+                    ?: kotlin.run {
+                        tempCanvas.drawTempRectangle(x, y)
+                    }
+            }
+
+            override fun onTouchUP(pxX: Int, pxY: Int) {
+                binding.canvasContainer.removeView(tempCanvas)
+                val tempPos = tempCanvas.getTempPosPx(pxX, pxY)
+                val movedPos =
+                    Pair(tempCanvas.convertPxToDp(tempPos.x), tempCanvas.convertPxToDp(tempPos.y))
+                canvasPresenter.moveRectangle(tempCanvas.rectangle, movedPos.first, movedPos.second)
+            }
+
+        }
+        return MyCanvas(
+            this,
+            canvasTouchListener,
+            canvasSizeListener
+        )
     }
 
     private fun loggerInitialize() {
@@ -84,7 +153,13 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 }
 
-
 interface CanvasTouchListener {
-    fun onTouch(x: Int, y: Int)
+    fun onTouchDown(x: Int, y: Int)
+    fun onMove(x: Int, y: Int)
+    fun onTouchUP(x: Int, y: Int)
 }
+
+interface CanvasSizeListener {
+    fun onMeasure(x: Int, y: Int)
+}
+

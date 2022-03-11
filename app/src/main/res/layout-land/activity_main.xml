@@ -13,7 +13,9 @@
         android:layout_height="match_parent"
         app:layout_constraintEnd_toStartOf="@+id/menu_layout"
         app:layout_constraintHorizontal_weight="8"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/menu_layout"
@@ -53,7 +55,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:stepSize="1.0"
-            android:valueFrom="0.0"
+            android:valueFrom="1.0"
             android:valueTo="10.0" />
 
 
@@ -63,11 +65,23 @@
         android:id="@+id/rectangle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
         android:gravity="bottom"
         android:text="사각형"
         android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/image_add_button"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/image_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text=" 사진 "
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/rectangle_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>

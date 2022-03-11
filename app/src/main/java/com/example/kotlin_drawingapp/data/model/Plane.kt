@@ -1,13 +1,18 @@
 package com.example.kotlin_drawingapp.data.model
 
-import com.example.kotlin_drawingapp.PlaneDataAddListener
+import com.example.kotlin_drawingapp.PlaneImageAddListener
+import com.example.kotlin_drawingapp.PlaneRectangleAddListener
+import com.example.kotlin_drawingapp.data.Picture
+import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.RectangleFactory
 
 object Plane {
-    val rectangleList = mutableListOf<Rectangle>()
+    var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
     var selectedRec: Rectangle? = null
+    var selectedPicture: Picture? = null
+    val pictureList = mutableListOf<com.example.kotlin_drawingapp.data.Picture>()
 
     fun getRectangleCount(): Int {
         return rectangleList.size
@@ -18,14 +23,26 @@ object Plane {
         return null
     }
 
-    fun addRectangle(rectangle: Rectangle, addListener: PlaneDataAddListener) {
+    fun addRectangle(rectangle: Rectangle, addListener: PlaneRectangleAddListener) {
         rectangleList.add(rectangle)
         addListener.onEvent(rectangleList)
     }
 
+    fun addImageRectangle(
+        picture: com.example.kotlin_drawingapp.data.Picture,
+        addListener: PlaneImageAddListener
+    ) {
+        pictureList.add(picture)
+        addListener.onEvent(pictureList)
+    }
+
     // add가 될 수도 있고 빈공간일 경우 모든 데이터를 지우기에 set prefix
     fun setSelectedRectangle(x: Int, y: Int) {
-        if (rectangleList.none { pointInRectangle(it, x, y) }) {
+        val allRectangleList = mutableListOf<Rectangle>()
+        allRectangleList.addAll(rectangleList)
+        allRectangleList.addAll(pictureList.map { it.rec })
+
+        if (existRecOrPic(x, y, allRectangleList)) {
             selectedRecList.clear()
             selectedRec = null
         } else {
@@ -33,9 +50,23 @@ object Plane {
                 if (pointInRectangle(it, x, y)) {
                     selectedRecList.add(it)
                     selectedRec = it
+                    selectedPicture = null
+                    return
+                }
+            }
+            pictureList.forEach {
+                if (pointInRectangle(it.rec, x, y)) {
+                    selectedRecList.add(it.rec)
+                    selectedRec = it.rec
+                    selectedPicture = it
+                    return
                 }
             }
         }
+    }
+
+    private fun existRecOrPic(x: Int, y: Int, allList: MutableList<Rectangle>): Boolean {
+        return allList.none { pointInRectangle(it, x, y) }
     }
 
     private fun pointInRectangle(rec: Rectangle, x: Int, y: Int): Boolean {
@@ -50,5 +81,10 @@ object Plane {
     fun changeSelectedRectangleColor() {
         selectedRec?.rgba = RectangleFactory().getRandomRgba()
     }
+
+    fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
+        rectangle?.point = Point(x, y)
+    }
+
 
 }

@@ -21,13 +21,14 @@ class Rectangle() {
     }
 
     fun getAlpha(): Int {
-        return (rgba.a.ordinal + 1) *255 / 10
+        return (rgba.a.ordinal + 1) * 255 / 10
     }
 }
 
 data class Size(val width: Int, val height: Int)
 data class Point(val x: Int, val y: Int)
 data class Rgba(var r: Int, var g: Int, var b: Int, var a: AlphaEnum)
+
 enum class AlphaEnum {
     ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, Ten
 }
