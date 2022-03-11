@@ -65,6 +65,7 @@ class CanvasPresenter(
     override fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
         Plane.moveRectangle(rectangle, x, y)
         canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+        canvasView.showSelectedAttribute(Plane.selectedRec)
     }
 
     override fun changeRectangleAttribute(changeAttribute: IChangeAttribute) {
@@ -73,7 +74,8 @@ class CanvasPresenter(
             canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
             canvasView.showSelectedAttribute(Plane.selectedRec)
         } catch (e: PositiveLimitException) {
-            Toast.makeText(canvasView as MainActivity, "1 미만의 값을 가질 수 없습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(canvasView as MainActivity, "1 미만의 값을 가질 수 없습니다", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 

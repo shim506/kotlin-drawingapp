@@ -5,6 +5,7 @@ import android.graphics.*
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.Size
 
 const val ALPHA_VALUE = 0.5F
 
@@ -22,7 +23,7 @@ class TempCanvas(
     private var touchY = convertPxToDp(dpClickY)
 
 
-    fun drawTempRec(pxX: Int, pxY: Int) {
+    fun drawTempRectangle(pxX: Int, pxY: Int) {
         isPicture = false
         val (startX, startY) = getTempPosPx(pxX, pxY)
         rectangle?.let {
@@ -33,12 +34,17 @@ class TempCanvas(
         }
     }
 
-    fun drawTempPic(x: Int, y: Int, picture: Picture) {
+    fun drawTempPicture(x: Int, y: Int, picture: Picture) {
         isPicture = true
         touchX = x
         touchY = y
         selectedPicture = picture
         invalidate()
+    }
+
+    fun getTempAttrDP(pxX: Int, pxY: Int): Pair<Point, Size?> {
+        val point = getTempPosPx(pxX, pxY)
+        return Pair(point , rectangle?.size)
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -80,4 +86,6 @@ class TempCanvas(
             convertDpToPx(rectangle?.point?.y ?: 0) + distY
         )
     }
+
+
 }

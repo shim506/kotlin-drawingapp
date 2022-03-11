@@ -13,7 +13,9 @@ import com.example.kotlin_drawingapp.changeAttr.WidthChange
 import com.example.kotlin_drawingapp.customView.MyCanvas
 import com.example.kotlin_drawingapp.customView.TempCanvas
 import com.example.kotlin_drawingapp.data.Picture
+import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.Size
 import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
@@ -127,6 +129,13 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.sizeHeightUpDownView?.value?.text = (selectedRec?.size?.height).toString()
     }
 
+    override fun showSelectedAttribute(point: Point, size: Size?) {
+        binding.posXUpDownView?.value?.text = point.x.toString()
+        binding.posYUpDownView?.value?.text = point.y.toString()
+        binding.sizeWidthUpDownView?.value?.text = size?.width.toString()
+        binding.sizeHeightUpDownView?.value?.text = size?.height.toString()
+    }
+
     private fun myCanvasInitialize(): MyCanvas {
         val canvasSizeListener = object : CanvasSizeListener {
             override fun onMeasure(x: Int, y: Int) {
@@ -142,10 +151,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             }
 
             override fun onMove(x: Int, y: Int) {
-                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPic(x, y, it) }
+                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPicture(x, y, it) }
                     ?: kotlin.run {
-                        tempCanvas.drawTempRec(x, y)
+                        tempCanvas.drawTempRectangle(x, y)
                     }
+                val (point, size) = tempCanvas.getTempAttrDP(x, y)
+                tempAttrUiUpdateDp(point, size)
             }
 
             override fun onTouchUP(pxX: Int, pxY: Int) {
@@ -162,6 +173,10 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             canvasTouchListener,
             canvasSizeListener
         )
+    }
+
+    private fun tempAttrUiUpdateDp(point: Point, size: Size?) {
+        showSelectedAttribute(point , size)
     }
 
     private fun attrUpDownButtonInitialize() {

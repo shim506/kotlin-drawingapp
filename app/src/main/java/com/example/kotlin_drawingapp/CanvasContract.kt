@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
 import com.example.kotlin_drawingapp.data.Picture
+import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.Size
 
 interface CanvasContract {
     interface Presenter {
@@ -35,6 +37,7 @@ interface CanvasContract {
         fun showSelectedAlpha(selectedRec: Rectangle?)
         fun getWindowSize(): Pair<Int, Int>
         fun showSelectedAttribute(selectedRec: Rectangle?)
-    }
+        fun showSelectedAttribute(point: Point, size: Size?)
+        }
 
-}
+    }
