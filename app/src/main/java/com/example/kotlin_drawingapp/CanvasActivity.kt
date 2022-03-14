@@ -16,7 +16,7 @@ import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Point
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.Size
-import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
+import com.example.kotlin_drawingapp.data.repository.LocalRectangleRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
+        canvasPresenter = CanvasPresenter(this, LocalRectangleRepository)
 
         loggerInitialize()
         attachCanvas()
