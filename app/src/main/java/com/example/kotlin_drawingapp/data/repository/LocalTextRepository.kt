@@ -8,6 +8,7 @@ object LocalTextRepository : TextRepository {
     val defaultUrl =
         "C:/Users/User/Desktop/CodeSquad/AndroidMission/kotlin-drawingapp/textSource.txt"
 
+    
     override fun loadText(url: String): String? {
         var bufferedReader: BufferedReader? = null
         try {
