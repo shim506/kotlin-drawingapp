@@ -12,6 +12,7 @@ import com.example.kotlin_drawingapp.changeAttr.PositiveLimitException
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.Plane
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
+import com.orhanobut.logger.Logger
 import java.io.ByteArrayOutputStream
 
 class CanvasPresenter(
