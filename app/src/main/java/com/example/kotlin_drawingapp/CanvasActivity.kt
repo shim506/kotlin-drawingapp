@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         )
     }
 
+
     private fun tempAttrUiUpdateDp(point: Point, size: Size?) {
         showSelectedAttribute(point , size)
     }
@@ -185,6 +186,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.sizeWidthUpDownView?.attr?.text = "W"
         binding.sizeHeightUpDownView?.attr?.text = "H"
     }
+
 
     private fun attrUpDownButtonListening() {
         with(binding) {
