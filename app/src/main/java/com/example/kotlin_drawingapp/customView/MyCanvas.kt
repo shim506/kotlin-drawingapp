@@ -9,6 +9,7 @@ import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Rectangle
 import com.example.kotlin_drawingapp.data.Text
 
+const val TEXT_SIZE = 60F
 
 class MyCanvas(
     context: Context,
@@ -94,7 +95,12 @@ class MyCanvas(
             with(it.rec) {
                 val textPaint = Paint()
                 textPaint.textSize = 50F
-                canvas?.drawText(it.text, convertDpToPx(this.point.x).toFloat(), convertDpToPx(this.point.y).toFloat() , textPaint)
+                canvas?.drawText(
+                    it.text,
+                    convertDpToPx(this.point.x).toFloat(),
+                    (convertDpToPx(this.point.y) + TEXT_SIZE).toFloat(),
+                    textPaint
+                )
             }
         }
         super.onDraw(canvas)
