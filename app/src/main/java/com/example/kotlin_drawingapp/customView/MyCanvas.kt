@@ -7,6 +7,7 @@ import com.example.kotlin_drawingapp.CanvasSizeListener
 import com.example.kotlin_drawingapp.CanvasTouchListener
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Rectangle
+import com.example.kotlin_drawingapp.data.Text
 
 
 class MyCanvas(
@@ -21,6 +22,7 @@ class MyCanvas(
     private var selectedRectangles = mutableListOf<Rectangle>()
     private var rectangles = mutableListOf<Rectangle>()
     private var pictureList = mutableListOf<Picture>()
+    private var textList = mutableListOf<Text>()
 
     fun drawRectangle(recList: MutableList<Rectangle>) {
         rectangles = recList
@@ -40,11 +42,13 @@ class MyCanvas(
     fun drawAll(
         rectangleList: MutableList<Rectangle>,
         pictures: MutableList<Picture>,
-        selectedRecList: MutableList<Rectangle>
+        selectedRecList: MutableList<Rectangle>,
+        textList: MutableList<Text>
     ) {
         rectangles = rectangleList
         selectedRectangles = selectedRecList
         this.pictureList = pictures
+        this.textList = textList
         invalidate()
     }
 
@@ -84,6 +88,13 @@ class MyCanvas(
                     startY,
                     paint
                 )
+            }
+        }
+        textList.forEach {
+            with(it.rec) {
+                val textPaint = Paint()
+                textPaint.textSize = 50F
+                canvas?.drawText(it.text, convertDpToPx(this.point.x).toFloat(), convertDpToPx(this.point.y).toFloat() , textPaint)
             }
         }
         super.onDraw(canvas)

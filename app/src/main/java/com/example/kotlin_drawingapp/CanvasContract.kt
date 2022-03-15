@@ -3,10 +3,7 @@ package com.example.kotlin_drawingapp
 import android.graphics.Bitmap
 import android.net.Uri
 import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
-import com.example.kotlin_drawingapp.data.Picture
-import com.example.kotlin_drawingapp.data.Point
-import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.Size
+import com.example.kotlin_drawingapp.data.*
 
 interface CanvasContract {
     interface Presenter {
@@ -20,6 +17,7 @@ interface CanvasContract {
         fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int)
         fun addImageRectangleWithUri(uri: Uri)
         fun changeRectangleAttribute(changeAttribute: IChangeAttribute)
+        fun addText()
 
     }
 
@@ -30,7 +28,8 @@ interface CanvasContract {
         fun showAll(
             rectangleList: MutableList<Rectangle>,
             pictureList: MutableList<Picture>,
-            selectedRecList: MutableList<Rectangle>
+            selectedRecList: MutableList<Rectangle>,
+            textList: MutableList<Text>
         )
 
         fun showSelectedColor(colorText: String)
@@ -38,6 +37,6 @@ interface CanvasContract {
         fun getWindowSize(): Pair<Int, Int>
         fun showSelectedAttribute(selectedRec: Rectangle?)
         fun showSelectedAttribute(point: Point, size: Size?)
-        }
-
     }
+
+}

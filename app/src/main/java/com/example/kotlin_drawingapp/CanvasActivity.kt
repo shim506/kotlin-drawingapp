@@ -12,11 +12,8 @@ import com.example.kotlin_drawingapp.changeAttr.VerticalChange
 import com.example.kotlin_drawingapp.changeAttr.WidthChange
 import com.example.kotlin_drawingapp.customView.MyCanvas
 import com.example.kotlin_drawingapp.customView.TempCanvas
-import com.example.kotlin_drawingapp.data.Picture
-import com.example.kotlin_drawingapp.data.Point
-import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.Size
-import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
+import com.example.kotlin_drawingapp.data.*
+import com.example.kotlin_drawingapp.data.repository.LocalRectangleRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -32,13 +29,15 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
+        canvasPresenter = CanvasPresenter(this, LocalRectangleRepository)
 
         initializeLogger()
         attachCanvas()
 
         addRectangleButtonListening()
         addImageButtonListening()
+        addTextButtonListening()
+
         changeColorButtonListening()
         changeAlphaSliderListening()
 
@@ -72,6 +71,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         }
     }
 
+    private fun addTextButtonListening(){
+        binding.textAddButton?.setOnClickListener {
+            canvasPresenter.addText()
+        }
+    }
+
     private fun changeColorButtonListening() {
         binding.rectangleColorButton?.setOnClickListener {
             canvasPresenter.changeRectangleColor()
@@ -88,6 +93,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         myCanvas.drawBound(selectedRec)
     }
 
+
     override fun showRectangle(rectangleList: MutableList<Rectangle>) {
         myCanvas.drawRectangle(rectangleList)
     }
@@ -99,11 +105,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     override fun showAll(
         rectangleList: MutableList<Rectangle>,
         pictureList: MutableList<Picture>,
-        selectedRecList: MutableList<Rectangle>
+        selectedRecList: MutableList<Rectangle>,
+        textList: MutableList<Text>
     ) {
         binding.canvasContainer.removeView(myCanvas)
         myCanvas = initializeMyCanvas()
-        myCanvas.drawAll(rectangleList, pictureList, selectedRecList)
+        myCanvas.drawAll(rectangleList, pictureList, selectedRecList , textList)
         binding.canvasContainer.addView(myCanvas)
     }
 

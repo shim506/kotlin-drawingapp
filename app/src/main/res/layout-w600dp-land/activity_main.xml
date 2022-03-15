@@ -133,8 +133,20 @@
         android:text=" 사진 "
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/text_add_button"
         app:layout_constraintStart_toEndOf="@id/rectangle_button" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:background="@drawable/my_button_background"
+        android:id="@+id/text_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text=" 텍스트 "
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image_add_button" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

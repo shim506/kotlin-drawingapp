@@ -11,8 +11,13 @@ import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
 import com.example.kotlin_drawingapp.changeAttr.PositiveLimitException
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.Plane
+import com.example.kotlin_drawingapp.data.repository.LocalTextRepository
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
+import com.example.kotlin_drawingapp.data.repository.TextRepository
 import java.io.ByteArrayOutputStream
+import java.lang.StringBuilder
+
+const val WORD_NUMBER = 5
 
 class CanvasPresenter(
     private val canvasView: CanvasContract.View,
@@ -26,7 +31,7 @@ class CanvasPresenter(
         val rect = createRectangle()
         Plane.addRectangle(rect, object : PlaneRectangleAddListener {
             override fun onEvent(rectangleList: MutableList<Rectangle>) {
-                canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+                canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList, Plane.textList)
             }
         })
     }
@@ -41,10 +46,33 @@ class CanvasPresenter(
                     canvasView.showAll(
                         Plane.rectangleList,
                         Plane.pictureList,
-                        Plane.selectedRecList
+                        Plane.selectedRecList, Plane.textList
                     )
                 }
             })
+    }
+
+    override fun addText() {
+        val rec = createTextRectangle()
+        val text = LocalTextRepository.loadText()
+        val randomText = subtractRandomText(text, WORD_NUMBER)
+        Plane.addText(Text(randomText, rec))
+        canvasView.showAll(
+            Plane.rectangleList,
+            Plane.pictureList,
+            Plane.selectedRecList, Plane.textList
+        )
+    }
+
+    private fun subtractRandomText(text: String, wordNumber: Int): String {
+        val textList = text.split(" ")
+
+        val st = StringBuilder()
+        repeat(wordNumber) {
+            val idx = (textList.indices).random()
+            st.append(textList[idx])
+        }
+        return st.toString()
     }
 
     override fun addImageRectangleWithUri(uri: Uri) {
@@ -62,14 +90,14 @@ class CanvasPresenter(
 
     override fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
         Plane.moveRectangle(rectangle, x, y)
-        canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+        canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList, Plane.textList)
         canvasView.showSelectedAttribute(Plane.selectedRec)
     }
 
     override fun changeRectangleAttribute(changeAttribute: IChangeAttribute) {
         try {
             Plane.selectedRec?.let { changeAttribute.applyChange(it) }
-            canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+            canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList, Plane.textList)
             canvasView.showSelectedAttribute(Plane.selectedRec)
         } catch (e: PositiveLimitException) {
             Toast.makeText(canvasView as MainActivity, "1 미만의 값을 가질 수 없습니다", Toast.LENGTH_SHORT)
@@ -125,6 +153,13 @@ class CanvasPresenter(
         rec.rgba.r = -1
         rec.rgba.g = -1
         rec.rgba.b = -1
+        return rec
+    }
+
+    private fun createTextRectangle(): Rectangle {
+        val rec = createRectangle()
+        rec.size.height = 30
+        rec.size.width = 100
         return rec
     }
 
