@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
 import com.example.kotlin_drawingapp.data.*
+import com.example.kotlin_drawingapp.data.model.selected.ISelected
 
 interface CanvasContract {
     interface Presenter {
@@ -12,13 +13,12 @@ interface CanvasContract {
         fun changeRectangleColor()
         fun changeRectangleAlpha(value: Float)
         fun addImageRectangle(bitmap: Bitmap)
+        fun getSelected(): ISelected?
         fun getSelectedRectangle(): Rectangle?
-        fun getSelectedPicture(): Picture?
         fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int)
         fun addImageRectangleWithUri(uri: Uri)
         fun changeRectangleAttribute(changeAttribute: IChangeAttribute)
         fun addText()
-
     }
 
     interface View {

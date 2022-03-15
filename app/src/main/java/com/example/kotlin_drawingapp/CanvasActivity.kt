@@ -157,10 +157,8 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             }
 
             override fun onMove(x: Int, y: Int) {
-                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPicture(x, y, it) }
-                    ?: kotlin.run {
-                        tempCanvas.drawTempRectangle(x, y)
-                    }
+
+                canvasPresenter.getSelected()?.let { it.drawSelected(tempCanvas , x , y) }
                 val (point, size) = tempCanvas.getTempAttrDP(x, y)
                 updateTempUiAttributeDp(point, size)
             }

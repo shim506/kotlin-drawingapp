@@ -3,15 +3,20 @@ package com.example.kotlin_drawingapp.data.model
 import com.example.kotlin_drawingapp.PlaneImageAddListener
 import com.example.kotlin_drawingapp.PlaneRectangleAddListener
 import com.example.kotlin_drawingapp.data.*
+import com.example.kotlin_drawingapp.data.model.selected.ISelected
+import com.example.kotlin_drawingapp.data.model.selected.PictureSelected
+import com.example.kotlin_drawingapp.data.model.selected.RectangleSelected
+import com.example.kotlin_drawingapp.data.model.selected.TextSelected
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.Logger.d
 
 object Plane {
     var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
-    var selectedRec: Rectangle? = null
+    var selected: ISelected? = null
+   // var selectedRec: Rectangle? = null
     var selectedPicture: Picture? = null
-    var selectedText : Text? = null
+    var selectedText: Text? = null
     val pictureList = mutableListOf<com.example.kotlin_drawingapp.data.Picture>()
     val textList = mutableListOf<Text>()
 
@@ -43,37 +48,34 @@ object Plane {
         val allRectangleList = mutableListOf<Rectangle>()
         allRectangleList.addAll(rectangleList)
         allRectangleList.addAll(pictureList.map { it.rec })
-    //    allRectangleList.addAll(textList.map { it.rec })
+        allRectangleList.addAll(textList.map { it.rec })
 
         if (existRecOrPic(x, y, allRectangleList)) {
             selectedRecList.clear()
-            selectedRec = null
+            selected = null
+            //selectedRec = null
         } else {
             rectangleList.forEach {
                 if (pointInRectangle(it, x, y)) {
-                    Logger.d("sdddd")
                     selectedRecList.add(it)
-                    selectedRec = it
-                    selectedPicture = null
+                    selected = RectangleSelected(it)
                     return
                 }
             }
             pictureList.forEach {
                 if (pointInRectangle(it.rec, x, y)) {
                     selectedRecList.add(it.rec)
-                    selectedRec = it.rec
-                    selectedPicture = it
+                    selected = PictureSelected(it)
                     return
                 }
             }
-//            textList.forEach {
-//                if (pointInRectangle(it.rec, x, y)) {
-//                    selectedRecList.add(it.rec)
-//                    selectedRec = it.rec
-//                    selectedText = it
-//                    return
-//                }
-//            }
+            textList.forEach {
+                if (pointInRectangle(it.rec, x, y)) {
+                    selectedRecList.add(it.rec)
+                    selected = TextSelected(it)
+                    return
+                }
+            }
         }
     }
 
@@ -88,10 +90,6 @@ object Plane {
             }
         }
         return false
-    }
-
-    fun changeSelectedRectangleColor() {
-        selectedRec?.rgba = Rectangle.getRandomRgba()
     }
 
     fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
