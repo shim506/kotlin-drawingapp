@@ -91,7 +91,7 @@ object Plane {
     }
 
     fun changeSelectedRectangleColor() {
-        selectedRec?.rgba = RectangleFactory().getRandomRgba()
+        selectedRec?.rgba = Rectangle.getRandomRgba()
     }
 
     fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {

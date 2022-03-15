@@ -117,7 +117,7 @@ class CanvasPresenter(
 
     private fun createRectangle(): Rectangle {
         val (widthDP, heightDP) = canvasView.getWindowSize()
-        return RectangleFactory().createRectangle(widthDP.toFloat(), heightDP.toFloat())
+        return Rectangle.createRectangle(widthDP.toFloat(), heightDP.toFloat())
     }
 
     private fun createImageRectangle(): Rectangle {
