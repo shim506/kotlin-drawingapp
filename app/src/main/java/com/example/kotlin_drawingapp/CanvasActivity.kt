@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         setContentView(binding.root)
         canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
 
-        loggerInitialize()
+        initializeLogger()
         attachCanvas()
 
         addRectangleButtonListening()
@@ -42,13 +42,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         changeColorButtonListening()
         changeAlphaSliderListening()
 
-        attrUpDownButtonInitialize()
-        attrUpDownButtonListening()
+        initializeAttributeUpDownButton()
+        setAttributeUpDownButtonListener()
     }
 
-
     private fun attachCanvas() {
-        myCanvas = myCanvasInitialize()
+        myCanvas = initializeMyCanvas()
         binding.canvasContainer.addView(myCanvas)
     }
 
@@ -103,7 +102,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         selectedRecList: MutableList<Rectangle>
     ) {
         binding.canvasContainer.removeView(myCanvas)
-        myCanvas = myCanvasInitialize()
+        myCanvas = initializeMyCanvas()
         myCanvas.drawAll(rectangleList, pictureList, selectedRecList)
         binding.canvasContainer.addView(myCanvas)
     }
@@ -136,7 +135,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.sizeHeightUpDownView?.value?.text = size?.height.toString()
     }
 
-    private fun myCanvasInitialize(): MyCanvas {
+    private fun initializeMyCanvas(): MyCanvas {
         val canvasSizeListener = object : CanvasSizeListener {
             override fun onMeasure(x: Int, y: Int) {
                 canvasSize = Pair(x, y)
@@ -156,7 +155,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
                         tempCanvas.drawTempRectangle(x, y)
                     }
                 val (point, size) = tempCanvas.getTempAttrDP(x, y)
-                tempAttrUiUpdateDp(point, size)
+                updateTempUiAttributeDp(point, size)
             }
 
             override fun onTouchUP(pxX: Int, pxY: Int) {
@@ -175,20 +174,18 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         )
     }
 
-
-    private fun tempAttrUiUpdateDp(point: Point, size: Size?) {
+    private fun updateTempUiAttributeDp(point: Point, size: Size?) {
         showSelectedAttribute(point , size)
     }
 
-    private fun attrUpDownButtonInitialize() {
+    private fun initializeAttributeUpDownButton() {
         binding.posXUpDownView?.attr?.text = "X"
         binding.posYUpDownView?.attr?.text = "Y"
         binding.sizeWidthUpDownView?.attr?.text = "W"
         binding.sizeHeightUpDownView?.attr?.text = "H"
     }
 
-
-    private fun attrUpDownButtonListening() {
+    private fun setAttributeUpDownButtonListener() {
         with(binding) {
             // x 좌표 변화
             posXUpDownView?.upButton?.setOnClickListener {
@@ -224,7 +221,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         }
     }
 
-    private fun loggerInitialize() {
+    private fun initializeLogger() {
         Logger.addLogAdapter(AndroidLogAdapter())
     }
 }
