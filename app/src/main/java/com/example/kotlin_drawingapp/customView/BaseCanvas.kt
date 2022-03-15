@@ -1,10 +1,11 @@
-package com.example.kotlin_drawingapp
+package com.example.kotlin_drawingapp.customView
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import com.example.kotlin_drawingapp.data.Rectangle
@@ -38,12 +39,9 @@ open class BaseCanvas(context: Context) : View(context) {
     }
 
     fun convertPxToDp(value: Int): Int {
-        var density = context.resources.displayMetrics.density
-        if (density.toDouble() == 1.0)
-            density *= 4.0.toFloat() else if (density.toDouble() == 1.5)
-            density *= (8 / 3).toFloat() else if (density.toDouble() == 2.0)
-            density *= 2.0.toFloat()
-        return (value / density).toInt()
+        val metrics = context.resources.displayMetrics;
+        val dp = value / ((metrics.densityDpi).toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+        return dp.toInt()
     }
 
     fun setLowerAlphaPaint(rec: Rectangle, value: Float): Paint {

@@ -6,6 +6,9 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
+import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
+import com.example.kotlin_drawingapp.changeAttr.PositiveLimitException
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.Plane
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
@@ -60,6 +63,18 @@ class CanvasPresenter(
     override fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
         Plane.moveRectangle(rectangle, x, y)
         canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+        canvasView.showSelectedAttribute(Plane.selectedRec)
+    }
+
+    override fun changeRectangleAttribute(changeAttribute: IChangeAttribute) {
+        try {
+            Plane.selectedRec?.let { changeAttribute.applyChange(it) }
+            canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+            canvasView.showSelectedAttribute(Plane.selectedRec)
+        } catch (e: PositiveLimitException) {
+            Toast.makeText(canvasView as MainActivity, "1 미만의 값을 가질 수 없습니다", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     override fun setSelectedRectangle(x: Int, y: Int) {
@@ -68,6 +83,7 @@ class CanvasPresenter(
         canvasView.showSelectedColor(colorText)
         canvasView.showSelectedAlpha(Plane.selectedRec)
         canvasView.showSelectedBound(Plane.selectedRecList)
+        canvasView.showSelectedAttribute(Plane.selectedRec)
     }
 
     private fun getSelectedColor(selectedRec: Rectangle?): String {
