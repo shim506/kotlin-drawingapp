@@ -8,7 +8,7 @@ import kotlinx.coroutines.selects.select
 class TextSelected(val selected: Text) : ISelected {
 
     override fun drawSelected(tempCanvas: TempCanvas, x: Int, y: Int) {
-      tempCanvas.drawTempText(x , y , selected)
+        tempCanvas.drawTempText(x, y, selected)
     }
 
     override fun changeToRandomColor() {
@@ -16,6 +16,6 @@ class TextSelected(val selected: Text) : ISelected {
     }
 
     override fun getRectangle(): Rectangle {
-      return selected.rec
+        return selected.rec
     }
 }

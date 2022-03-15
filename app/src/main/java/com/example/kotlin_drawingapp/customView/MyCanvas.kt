@@ -18,7 +18,6 @@ class MyCanvas(
 
     ) : BaseCanvas(context) {
 
-
     private var rect: RectF = RectF()
     private var selectedRectangles = mutableListOf<Rectangle>()
     private var rectangles = mutableListOf<Rectangle>()

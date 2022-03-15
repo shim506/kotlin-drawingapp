@@ -45,7 +45,6 @@ open class BaseCanvas(context: Context) : View(context) {
     }
 
     fun setLowerAlphaPaint(rec: Rectangle, value: Float): Paint {
-
         val paint = setPaint(rec)
         paint.alpha = (rec.getAlpha() * value).toInt()
         return paint

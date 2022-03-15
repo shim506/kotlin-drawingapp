@@ -64,7 +64,6 @@ class Rectangle private constructor() {
             repeat(2 - numericIterValue) { st.append((97..122).random().toChar()) }
             st.append('-')
 
-
             repeat(2) {
                 // 세번
                 numericIterValue = (0..3).random()
@@ -73,10 +72,8 @@ class Rectangle private constructor() {
                 st.append('-')
             }
             st.setLength(st.length - 1);
-
             return st.toString()
         }
-
     }
 }
 

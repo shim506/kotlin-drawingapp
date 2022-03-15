@@ -24,7 +24,6 @@ class TempCanvas(
     private var touchX = convertDpToPx(dpClickX)
     private var touchY = convertPxToDp(dpClickY)
 
-
     fun drawTempRectangle(pxX: Int, pxY: Int) {
         selectedType = SelectedType.RECTANGLE
         val (startX, startY) = getTempPosPx(pxX, pxY)
@@ -114,8 +113,6 @@ class TempCanvas(
             convertDpToPx(rectangle?.point?.y ?: 0) + distY
         )
     }
-
-
 }
 
 enum class SelectedType {

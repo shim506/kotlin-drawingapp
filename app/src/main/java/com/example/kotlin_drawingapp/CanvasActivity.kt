@@ -93,7 +93,6 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         myCanvas.drawBound(selectedRec)
     }
 
-
     override fun showRectangle(rectangleList: MutableList<Rectangle>) {
         myCanvas.drawRectangle(rectangleList)
     }
@@ -157,7 +156,6 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             }
 
             override fun onMove(x: Int, y: Int) {
-
                 canvasPresenter.getSelected()?.let { it.drawSelected(tempCanvas , x , y) }
                 val (point, size) = tempCanvas.getTempAttrDP(x, y)
                 updateTempUiAttributeDp(point, size)

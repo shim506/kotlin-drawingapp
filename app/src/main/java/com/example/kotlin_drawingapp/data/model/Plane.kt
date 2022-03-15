@@ -14,9 +14,6 @@ object Plane {
     var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
     var selected: ISelected? = null
-   // var selectedRec: Rectangle? = null
-    var selectedPicture: Picture? = null
-    var selectedText: Text? = null
     val pictureList = mutableListOf<com.example.kotlin_drawingapp.data.Picture>()
     val textList = mutableListOf<Text>()
 
@@ -53,7 +50,6 @@ object Plane {
         if (existRecOrPic(x, y, allRectangleList)) {
             selectedRecList.clear()
             selected = null
-            //selectedRec = null
         } else {
             rectangleList.forEach {
                 if (pointInRectangle(it, x, y)) {
@@ -100,5 +96,7 @@ object Plane {
         textList.add(randomText)
     }
 
-
+    fun getSelectedRectangle(): Rectangle? {
+        return selected?.getRectangle()
+    }
 }

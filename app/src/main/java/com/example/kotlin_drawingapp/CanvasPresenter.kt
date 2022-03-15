@@ -90,10 +90,10 @@ class CanvasPresenter(
     override fun getSelected(): ISelected? {
         return Plane.selected
     }
-    override fun getSelectedRectangle():Rectangle?{
+
+    override fun getSelectedRectangle(): Rectangle? {
         return Plane.selected?.getRectangle()
     }
-
 
     override fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
         Plane.moveRectangle(rectangle, x, y)
@@ -108,14 +108,14 @@ class CanvasPresenter(
 
     override fun changeRectangleAttribute(changeAttribute: IChangeAttribute) {
         try {
-            Plane.selected?.getRectangle()?.let { changeAttribute.applyChange(it) }
+            Plane.getSelectedRectangle()?.let { changeAttribute.applyChange(it) }
             canvasView.showAll(
                 Plane.rectangleList,
                 Plane.pictureList,
                 Plane.selectedRecList,
                 Plane.textList
             )
-            canvasView.showSelectedAttribute(Plane.selected?.getRectangle())
+            canvasView.showSelectedAttribute(Plane.getSelectedRectangle())
         } catch (e: PositiveLimitException) {
             Toast.makeText(canvasView as MainActivity, "1 미만의 값을 가질 수 없습니다", Toast.LENGTH_SHORT)
                 .show()
@@ -124,11 +124,11 @@ class CanvasPresenter(
 
     override fun setSelectedRectangle(x: Int, y: Int) {
         Plane.setSelectedRectangle(x, y)
-        val colorText: String = getSelectedColor(Plane.selected?.getRectangle())
+        val colorText: String = getSelectedColor(Plane.getSelectedRectangle())
         canvasView.showSelectedColor(colorText)
-        canvasView.showSelectedAlpha(Plane.selected?.getRectangle())
+        canvasView.showSelectedAlpha(Plane.getSelectedRectangle())
         canvasView.showSelectedBound(Plane.selectedRecList)
-        canvasView.showSelectedAttribute(Plane.selected?.getRectangle())
+        canvasView.showSelectedAttribute(Plane.getSelectedRectangle())
     }
 
     private fun getSelectedColor(selectedRec: Rectangle?): String {
