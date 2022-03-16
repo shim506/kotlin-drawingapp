@@ -165,8 +165,13 @@ class CanvasPresenter(
         return Rectangle.createRectangle(widthDP.toFloat(), heightDP.toFloat())
     }
 
+    private fun createRectangleForOther(): Rectangle {
+        val (widthDP, heightDP) = canvasView.getWindowSize()
+        return Rectangle.createRectangleForOther(widthDP.toFloat(), heightDP.toFloat())
+    }
+
     private fun createImageRectangle(): Rectangle {
-        val rec = createRectangle()
+        val rec = createRectangleForOther()
         rec.rgba.r = -1
         rec.rgba.g = -1
         rec.rgba.b = -1
@@ -174,7 +179,7 @@ class CanvasPresenter(
     }
 
     private fun createTextRectangle(): Rectangle {
-        val rec = createRectangle()
+        val rec = createRectangleForOther()
         rec.size.height = WORD_HEIGHT
         rec.size.width = WORD_WIDTH
         rec.rgba.r = -1
