@@ -41,13 +41,16 @@ class CanvasPresenter(
                 )
             }
         })
+        canvasView.addObjectData(ObjectData(RECTANGLE_OBJECT_TYPE, rect, rect.getNumber()))
     }
 
     override fun addImageRectangle(bitmap: Bitmap) {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val rect = createImageRectangle()
+        val picture = Picture(stream.toByteArray(), rect)
         Plane.addImageRectangle(
-            Picture(stream.toByteArray(), createImageRectangle()),
+            picture,
             object : PlaneImageAddListener {
                 override fun onEvent(pictureList: MutableList<Picture>) {
                     canvasView.showAll(
@@ -57,18 +60,21 @@ class CanvasPresenter(
                     )
                 }
             })
+        canvasView.addObjectData(ObjectData(PICTURE_OBJECT_TYPE, rect, picture.getNumber()))
     }
 
     override fun addText() {
         val rec = createTextRectangle()
         val text = LocalTextRepository.loadText()
         val randomText = subtractRandomText(text, WORD_NUMBER)
-        Plane.addText(Text(randomText, rec))
+        val newText = Text(randomText, rec)
+        Plane.addText(newText)
         canvasView.showAll(
             Plane.rectangleList,
             Plane.pictureList,
             Plane.selectedRecList, Plane.textList
         )
+        canvasView.addObjectData(ObjectData(TEXT_OBJECT_TYPE, rec, newText.getNumber()))
     }
 
     private fun subtractRandomText(text: String, wordNumber: Int): String {

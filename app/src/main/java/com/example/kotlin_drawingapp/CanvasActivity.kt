@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
 import com.example.kotlin_drawingapp.changeAttr.HeightChange
 import com.example.kotlin_drawingapp.changeAttr.HorizontalChange
@@ -24,6 +26,8 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     lateinit var myCanvas: MyCanvas
     lateinit var tempCanvas: TempCanvas
     var canvasSize: Pair<Int, Int> = Pair(0, 0)
+    lateinit var objectAdapter: ObjectViewAdapter
+    private val dataList = mutableListOf<ObjectData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +47,21 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
 
         initializeAttributeUpDownButton()
         setAttributeUpDownButtonListener()
+
+        initRecycler()
+    }
+
+    private fun initRecycler() {
+        //dataList.add(ObjectData(RECTANGLE_OBJECT_TYPE, Rectangle.createRectangle(200F, 200F), 10))
+        objectAdapter = ObjectViewAdapter(this, dataList)
+
+        binding.objectRecyclerview?.let {
+            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            it.layoutManager = layoutManager
+            it.adapter = objectAdapter
+        }
+
+        objectAdapter.notifyDataSetChanged()
     }
 
     private fun attachCanvas() {
@@ -68,10 +87,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     private fun addRectangleButtonListening() {
         binding.rectangleButton.setOnClickListener {
             canvasPresenter.addRectangle()
+
         }
+
     }
 
-    private fun addTextButtonListening(){
+    private fun addTextButtonListening() {
         binding.textAddButton?.setOnClickListener {
             canvasPresenter.addText()
         }
@@ -109,7 +130,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     ) {
         binding.canvasContainer.removeView(myCanvas)
         myCanvas = initializeMyCanvas()
-        myCanvas.drawAll(rectangleList, pictureList, selectedRecList , textList)
+        myCanvas.drawAll(rectangleList, pictureList, selectedRecList, textList)
         binding.canvasContainer.addView(myCanvas)
     }
 
@@ -141,6 +162,11 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.sizeHeightUpDownView?.value?.text = size?.height.toString()
     }
 
+    override fun addObjectData(objectData: ObjectData) {
+        dataList.add(0,objectData)
+        objectAdapter.updateReceiptsList(dataList)
+    }
+
     private fun initializeMyCanvas(): MyCanvas {
         val canvasSizeListener = object : CanvasSizeListener {
             override fun onMeasure(x: Int, y: Int) {
@@ -156,7 +182,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             }
 
             override fun onMove(x: Int, y: Int) {
-                canvasPresenter.getSelected()?.let { it.drawSelected(tempCanvas , x , y) }
+                canvasPresenter.getSelected()?.let { it.drawSelected(tempCanvas, x, y) }
                 val (point, size) = tempCanvas.getTempAttrDP(x, y)
                 updateTempUiAttributeDp(point, size)
             }
@@ -178,7 +204,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 
     private fun updateTempUiAttributeDp(point: Point, size: Size?) {
-        showSelectedAttribute(point , size)
+        showSelectedAttribute(point, size)
     }
 
     private fun initializeAttributeUpDownButton() {
