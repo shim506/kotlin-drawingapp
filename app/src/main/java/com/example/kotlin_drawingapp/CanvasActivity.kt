@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_drawingapp.CanvasContract.Presenter
 import com.example.kotlin_drawingapp.changeAttr.HeightChange
 import com.example.kotlin_drawingapp.changeAttr.HorizontalChange
@@ -12,11 +14,8 @@ import com.example.kotlin_drawingapp.changeAttr.VerticalChange
 import com.example.kotlin_drawingapp.changeAttr.WidthChange
 import com.example.kotlin_drawingapp.customView.MyCanvas
 import com.example.kotlin_drawingapp.customView.TempCanvas
-import com.example.kotlin_drawingapp.data.Picture
-import com.example.kotlin_drawingapp.data.Point
-import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.Size
-import com.example.kotlin_drawingapp.data.repository.LocalTextFileRepository
+import com.example.kotlin_drawingapp.data.*
+import com.example.kotlin_drawingapp.data.repository.LocalRectangleRepository
 import com.example.kotlin_drawingapp.databinding.ActivityMainBinding
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -27,28 +26,46 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     lateinit var myCanvas: MyCanvas
     lateinit var tempCanvas: TempCanvas
     var canvasSize: Pair<Int, Int> = Pair(0, 0)
+    lateinit var objectAdapter: ObjectViewAdapter
+    private val dataList = mutableListOf<ObjectData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        canvasPresenter = CanvasPresenter(this, LocalTextFileRepository)
+        canvasPresenter = CanvasPresenter(this, LocalRectangleRepository)
 
-        loggerInitialize()
+        initializeLogger()
         attachCanvas()
 
         addRectangleButtonListening()
         addImageButtonListening()
+        addTextButtonListening()
+
         changeColorButtonListening()
         changeAlphaSliderListening()
 
-        attrUpDownButtonInitialize()
-        attrUpDownButtonListening()
+        initializeAttributeUpDownButton()
+        setAttributeUpDownButtonListener()
+
+        initRecycler()
     }
 
+    private fun initRecycler() {
+        //dataList.add(ObjectData(RECTANGLE_OBJECT_TYPE, Rectangle.createRectangle(200F, 200F), 10))
+        objectAdapter = ObjectViewAdapter(this, dataList)
+
+        binding.objectRecyclerview?.let {
+            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            it.layoutManager = layoutManager
+            it.adapter = objectAdapter
+        }
+
+        objectAdapter.notifyDataSetChanged()
+    }
 
     private fun attachCanvas() {
-        myCanvas = myCanvasInitialize()
+        myCanvas = initializeMyCanvas()
         binding.canvasContainer.addView(myCanvas)
     }
 
@@ -70,6 +87,14 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     private fun addRectangleButtonListening() {
         binding.rectangleButton.setOnClickListener {
             canvasPresenter.addRectangle()
+
+        }
+
+    }
+
+    private fun addTextButtonListening() {
+        binding.textAddButton?.setOnClickListener {
+            canvasPresenter.addText()
         }
     }
 
@@ -100,11 +125,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     override fun showAll(
         rectangleList: MutableList<Rectangle>,
         pictureList: MutableList<Picture>,
-        selectedRecList: MutableList<Rectangle>
+        selectedRecList: MutableList<Rectangle>,
+        textList: MutableList<Text>
     ) {
         binding.canvasContainer.removeView(myCanvas)
-        myCanvas = myCanvasInitialize()
-        myCanvas.drawAll(rectangleList, pictureList, selectedRecList)
+        myCanvas = initializeMyCanvas()
+        myCanvas.drawAll(rectangleList, pictureList, selectedRecList, textList)
         binding.canvasContainer.addView(myCanvas)
     }
 
@@ -136,7 +162,12 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.sizeHeightUpDownView?.value?.text = size?.height.toString()
     }
 
-    private fun myCanvasInitialize(): MyCanvas {
+    override fun addObjectData(objectData: ObjectData) {
+        dataList.add(0,objectData)
+        objectAdapter.updateReceiptsList(dataList)
+    }
+
+    private fun initializeMyCanvas(): MyCanvas {
         val canvasSizeListener = object : CanvasSizeListener {
             override fun onMeasure(x: Int, y: Int) {
                 canvasSize = Pair(x, y)
@@ -151,12 +182,9 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
             }
 
             override fun onMove(x: Int, y: Int) {
-                canvasPresenter.getSelectedPicture()?.let { tempCanvas.drawTempPicture(x, y, it) }
-                    ?: kotlin.run {
-                        tempCanvas.drawTempRectangle(x, y)
-                    }
+                canvasPresenter.getSelected()?.let { it.drawSelected(tempCanvas, x, y) }
                 val (point, size) = tempCanvas.getTempAttrDP(x, y)
-                tempAttrUiUpdateDp(point, size)
+                updateTempUiAttributeDp(point, size)
             }
 
             override fun onTouchUP(pxX: Int, pxY: Int) {
@@ -175,20 +203,18 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         )
     }
 
-
-    private fun tempAttrUiUpdateDp(point: Point, size: Size?) {
-        showSelectedAttribute(point , size)
+    private fun updateTempUiAttributeDp(point: Point, size: Size?) {
+        showSelectedAttribute(point, size)
     }
 
-    private fun attrUpDownButtonInitialize() {
+    private fun initializeAttributeUpDownButton() {
         binding.posXUpDownView?.attr?.text = "X"
         binding.posYUpDownView?.attr?.text = "Y"
         binding.sizeWidthUpDownView?.attr?.text = "W"
         binding.sizeHeightUpDownView?.attr?.text = "H"
     }
 
-
-    private fun attrUpDownButtonListening() {
+    private fun setAttributeUpDownButtonListener() {
         with(binding) {
             // x 좌표 변화
             posXUpDownView?.upButton?.setOnClickListener {
@@ -224,7 +250,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         }
     }
 
-    private fun loggerInitialize() {
+    private fun initializeLogger() {
         Logger.addLogAdapter(AndroidLogAdapter())
     }
 }

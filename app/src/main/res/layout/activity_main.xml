@@ -7,81 +7,183 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/object_container"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/my_stroke"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/canvas_container"
+        app:layout_constraintHorizontal_weight="1.5"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/layer_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:gravity="bottom"
+            android:text="레이어"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/object_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layer_text_view">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <FrameLayout
         android:id="@+id/canvas_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toStartOf="@+id/menu_layout"
         app:layout_constraintHorizontal_weight="8"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toEndOf="@id/object_container"
+        tools:layout_editor_absoluteY="87dp">
 
     </FrameLayout>
 
-    <LinearLayout
+    <ScrollView
         android:id="@+id/menu_layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:background="#806C6C6C"
-        android:orientation="vertical"
+        android:background="@drawable/my_stroke"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="2"
         app:layout_constraintStart_toEndOf="@id/canvas_container">
+        >
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="배경색" />
-
-        <Button
-
-            android:id="@+id/rectangle_color_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="배경색" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="투명도" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/rectangle_alpha_slider"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:stepSize="1.0"
-            android:valueFrom="1.0"
-            android:valueTo="10.0" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:text="배경색" />
+
+            <android.widget.Button
+
+                android:id="@+id/rectangle_color_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/my_button_background"
+                android:text="배경색" />
 
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:text="투명도" />
 
-    <Button
+            <com.google.android.material.slider.Slider
+                android:id="@+id/rectangle_alpha_slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:stepSize="1.0"
+                android:valueFrom="1.0"
+                android:valueTo="10.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:text="위치" />
+
+            <com.example.kotlin_drawingapp.customView.UpDownView
+                android:id="@+id/pos_x_up_down_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"></com.example.kotlin_drawingapp.customView.UpDownView>
+
+            <com.example.kotlin_drawingapp.customView.UpDownView
+                android:id="@+id/pos_y_up_down_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"></com.example.kotlin_drawingapp.customView.UpDownView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:text="크기" />
+
+            <com.example.kotlin_drawingapp.customView.UpDownView
+                android:id="@+id/size_width_up_down_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"></com.example.kotlin_drawingapp.customView.UpDownView>
+
+            <com.example.kotlin_drawingapp.customView.UpDownView
+                android:id="@+id/size_height_up_down_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"></com.example.kotlin_drawingapp.customView.UpDownView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/rectangle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
-        android:gravity="bottom"
+        android:background="@drawable/my_button_background"
         android:text="사각형"
-        android:textSize="30dp"
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/image_add_button"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/image_add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:background="@drawable/my_button_background"
         android:text=" 사진 "
-        android:textSize="30dp"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/text_add_button"
+        app:layout_constraintStart_toEndOf="@id/rectangle_button" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/text_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/my_button_background"
+        android:text=" 텍스트 "
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/rectangle_button" />
+        app:layout_constraintStart_toEndOf="@id/image_add_button" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

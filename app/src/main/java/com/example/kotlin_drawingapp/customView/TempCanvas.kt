@@ -2,10 +2,10 @@ package com.example.kotlin_drawingapp.customView
 
 import android.content.Context
 import android.graphics.*
+import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Point
-import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.Size
+import com.orhanobut.logger.Logger
 
 const val ALPHA_VALUE = 0.5F
 
@@ -17,14 +17,15 @@ class TempCanvas(
 ) : BaseCanvas(context) {
     private var rect: RectF = RectF()
 
-    var isPicture = false
+    private var objectType: ObjectType? = null
     var selectedPicture: Picture? = null
+    var selectedText: Text? = null
+
     private var touchX = convertDpToPx(dpClickX)
     private var touchY = convertPxToDp(dpClickY)
 
-
     fun drawTempRectangle(pxX: Int, pxY: Int) {
-        isPicture = false
+        objectType = ObjectType.RECTANGLE
         val (startX, startY) = getTempPosPx(pxX, pxY)
         rectangle?.let {
             val width = convertDpToPx(it.size.width)
@@ -35,43 +36,72 @@ class TempCanvas(
     }
 
     fun drawTempPicture(x: Int, y: Int, picture: Picture) {
-        isPicture = true
+        objectType = ObjectType.PICTURE
+        selectedPicture = picture
         touchX = x
         touchY = y
-        selectedPicture = picture
         invalidate()
+    }
+
+    fun drawTempText(x: Int, y: Int, selected: Text) {
+        objectType = ObjectType.TEXT
+        selectedText = selected
+        touchX = x
+        touchY = y
+        invalidate()
+
     }
 
     fun getTempAttrDP(pxX: Int, pxY: Int): Pair<Point, Size?> {
         val point = getTempPosPx(pxX, pxY)
-        return Pair(point , rectangle?.size)
+        return Pair(point, rectangle?.size)
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if (isPicture) {
-            selectedPicture?.let {
-                with(it.rec) {
-                    val bitmap = android.graphics.BitmapFactory.decodeByteArray(
-                        it.byteArray,
-                        0,
-                        it.byteArray.size
-                    )
-                    val resizedBitmap = resizeBitmap(bitmap, this.size)
-                    val paint = Paint()
-                    paint.alpha = this.getAlpha()
-                    val (startX, startY) = getTempPosPx(touchX, touchY)
-                    canvas?.drawBitmap(
-                        resizedBitmap,
-                        startX.toFloat(),
-                        startY.toFloat(),
-                        paint
-                    )
+
+        when (objectType) {
+            ObjectType.PICTURE -> {
+                selectedPicture?.let {
+                    with(it.rec) {
+                        val bitmap = android.graphics.BitmapFactory.decodeByteArray(
+                            it.byteArray,
+                            0,
+                            it.byteArray.size
+                        )
+                        val resizedBitmap = resizeBitmap(bitmap, this.size)
+                        val paint = Paint()
+                        paint.alpha = this.getAlpha()
+                        val (startX, startY) = getTempPosPx(touchX, touchY)
+                        canvas?.drawBitmap(
+                            resizedBitmap,
+                            startX.toFloat(),
+                            startY.toFloat(),
+                            paint
+                        )
+                    }
+                    // Logger.d("픽쳐 ${it.getNumber()}")
                 }
             }
-        } else {
-            rectangle?.let {
-                val paint = setLowerAlphaPaint(rectangle, ALPHA_VALUE)
-                canvas?.drawRect(rect, paint)
+            ObjectType.RECTANGLE -> {
+                rectangle?.let {
+                    val paint = setLowerAlphaPaint(rectangle, ALPHA_VALUE)
+                    canvas?.drawRect(rect, paint)
+                    //Logger.d("렉텡 ${it.getNumber()}")
+                }
+            }
+            ObjectType.TEXT -> {
+                val textPaint = Paint()
+                textPaint.textSize = 50F
+                val tempPoint = getTempPosPx(touchX, touchY)
+                selectedText?.let {
+                    canvas?.drawText(
+                        it.text,
+                        tempPoint.x.toFloat(),
+                        ((tempPoint.y) + TEXT_SIZE).toFloat(),
+                        textPaint
+                    )
+                    // Logger.d("텍스트 ${it.getNumber()}")
+                }
             }
         }
         super.onDraw(canvas)
@@ -86,6 +116,5 @@ class TempCanvas(
             convertDpToPx(rectangle?.point?.y ?: 0) + distY
         )
     }
-
-
 }
+

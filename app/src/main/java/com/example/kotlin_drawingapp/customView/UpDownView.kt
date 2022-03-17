@@ -16,16 +16,10 @@ class UpDownView(context: Context, attrs: AttributeSet) : ConstraintLayout(conte
     lateinit var value: TextView
 
     init {
-        val infService = Context.LAYOUT_INFLATER_SERVICE;
-        val li = getContext().getSystemService(infService) as LayoutInflater;
-        li.inflate(R.layout.up_down_view, this, true);
-
+        LayoutInflater.from(context).inflate(R.layout.up_down_view,this , true)
         upButton = findViewById(R.id.up_image_button)
         downButton = findViewById(R.id.down_image_button)
         attr = findViewById(R.id.attr)
         value = findViewById(R.id.value)
-
     }
-
-
 }

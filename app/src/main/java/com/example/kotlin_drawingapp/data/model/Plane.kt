@@ -2,17 +2,20 @@ package com.example.kotlin_drawingapp.data.model
 
 import com.example.kotlin_drawingapp.PlaneImageAddListener
 import com.example.kotlin_drawingapp.PlaneRectangleAddListener
-import com.example.kotlin_drawingapp.data.Picture
-import com.example.kotlin_drawingapp.data.Point
-import com.example.kotlin_drawingapp.data.Rectangle
-import com.example.kotlin_drawingapp.data.RectangleFactory
+import com.example.kotlin_drawingapp.data.*
+import com.example.kotlin_drawingapp.data.model.selected.ISelected
+import com.example.kotlin_drawingapp.data.model.selected.PictureSelected
+import com.example.kotlin_drawingapp.data.model.selected.RectangleSelected
+import com.example.kotlin_drawingapp.data.model.selected.TextSelected
+import com.orhanobut.logger.Logger
+import com.orhanobut.logger.Logger.d
 
 object Plane {
     var rectangleList = mutableListOf<Rectangle>()
     var selectedRecList = mutableListOf<Rectangle>()
-    var selectedRec: Rectangle? = null
-    var selectedPicture: Picture? = null
+    var selected: ISelected? = null
     val pictureList = mutableListOf<com.example.kotlin_drawingapp.data.Picture>()
+    val textList = mutableListOf<Text>()
 
     fun getRectangleCount(): Int {
         return rectangleList.size
@@ -26,6 +29,7 @@ object Plane {
     fun addRectangle(rectangle: Rectangle, addListener: PlaneRectangleAddListener) {
         rectangleList.add(rectangle)
         addListener.onEvent(rectangleList)
+        Logger.d(rectangleList)
     }
 
     fun addImageRectangle(
@@ -41,24 +45,30 @@ object Plane {
         val allRectangleList = mutableListOf<Rectangle>()
         allRectangleList.addAll(rectangleList)
         allRectangleList.addAll(pictureList.map { it.rec })
+        allRectangleList.addAll(textList.map { it.rec })
 
         if (existRecOrPic(x, y, allRectangleList)) {
             selectedRecList.clear()
-            selectedRec = null
+            selected = null
         } else {
             rectangleList.forEach {
                 if (pointInRectangle(it, x, y)) {
                     selectedRecList.add(it)
-                    selectedRec = it
-                    selectedPicture = null
+                    selected = RectangleSelected(it)
                     return
                 }
             }
             pictureList.forEach {
                 if (pointInRectangle(it.rec, x, y)) {
                     selectedRecList.add(it.rec)
-                    selectedRec = it.rec
-                    selectedPicture = it
+                    selected = PictureSelected(it)
+                    return
+                }
+            }
+            textList.forEach {
+                if (pointInRectangle(it.rec, x, y)) {
+                    selectedRecList.add(it.rec)
+                    selected = TextSelected(it)
                     return
                 }
             }
@@ -78,13 +88,15 @@ object Plane {
         return false
     }
 
-    fun changeSelectedRectangleColor() {
-        selectedRec?.rgba = RectangleFactory().getRandomRgba()
-    }
-
     fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
         rectangle?.point = Point(x, y)
     }
 
+    fun addText(randomText: Text) {
+        textList.add(randomText)
+    }
 
+    fun getSelectedRectangle(): Rectangle? {
+        return selected?.getRectangle()
+    }
 }

@@ -9,7 +9,7 @@ class RectangleFactoryTest {
     @Before
     fun initialize() {
         repeat(10){
-            val rectangle = RectangleFactory().createRectangle(10F, 20F)
+            val rectangle = Rectangle.createRectangle(10F, 20F)
             println(rectangle.toString())
         }
 
@@ -18,8 +18,7 @@ class RectangleFactoryTest {
     @Test
     fun getRandomId() {
         repeat(10) {
-            val rectangleFactory = RectangleFactory()
-            val id = rectangleFactory.getRandomId()
+            val id = Rectangle.getRandomId()
             for (i in id.indices) {
                 if ((i + 1) % 4 == 0) {
                     assertEquals('-', id[i])

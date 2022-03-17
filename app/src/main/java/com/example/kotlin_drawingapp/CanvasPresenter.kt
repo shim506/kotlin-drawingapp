@@ -11,8 +11,15 @@ import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
 import com.example.kotlin_drawingapp.changeAttr.PositiveLimitException
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.Plane
+import com.example.kotlin_drawingapp.data.repository.LocalTextRepository
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
+import com.example.kotlin_drawingapp.data.model.selected.ISelected
 import java.io.ByteArrayOutputStream
+import java.lang.StringBuilder
+
+const val WORD_NUMBER = 5
+const val WORD_HEIGHT = 50 // PX
+const val WORD_WIDTH = 400 // PX
 
 class CanvasPresenter(
     private val canvasView: CanvasContract.View,
@@ -26,25 +33,59 @@ class CanvasPresenter(
         val rect = createRectangle()
         Plane.addRectangle(rect, object : PlaneRectangleAddListener {
             override fun onEvent(rectangleList: MutableList<Rectangle>) {
-                canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
+                canvasView.showAll(
+                    Plane.rectangleList,
+                    Plane.pictureList,
+                    Plane.selectedRecList,
+                    Plane.textList
+                )
             }
         })
+        canvasView.addObjectData(ObjectData(RECTANGLE_OBJECT_TYPE, rect, rect.getNumber()))
     }
 
     override fun addImageRectangle(bitmap: Bitmap) {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val rect = createImageRectangle()
+        val picture = Picture(stream.toByteArray(), rect)
         Plane.addImageRectangle(
-            Picture(stream.toByteArray(), createImageRectangle()),
+            picture,
             object : PlaneImageAddListener {
                 override fun onEvent(pictureList: MutableList<Picture>) {
                     canvasView.showAll(
                         Plane.rectangleList,
                         Plane.pictureList,
-                        Plane.selectedRecList
+                        Plane.selectedRecList, Plane.textList
                     )
                 }
             })
+        canvasView.addObjectData(ObjectData(PICTURE_OBJECT_TYPE, rect, picture.getNumber()))
+    }
+
+    override fun addText() {
+        val rec = createTextRectangle()
+        val text = LocalTextRepository.loadText()
+        val randomText = subtractRandomText(text, WORD_NUMBER)
+        val newText = Text(randomText, rec)
+        Plane.addText(newText)
+        canvasView.showAll(
+            Plane.rectangleList,
+            Plane.pictureList,
+            Plane.selectedRecList, Plane.textList
+        )
+        canvasView.addObjectData(ObjectData(TEXT_OBJECT_TYPE, rec, newText.getNumber()))
+    }
+
+    private fun subtractRandomText(text: String, wordNumber: Int): String {
+        val textList = text.split(" ")
+
+        val st = StringBuilder()
+        repeat(wordNumber) {
+            val idx = (textList.indices).random()
+            st.append("${textList[idx]} ")
+        }
+        return st.toString()
     }
 
     override fun addImageRectangleWithUri(uri: Uri) {
@@ -52,25 +93,35 @@ class CanvasPresenter(
         addImageRectangle(bitmap)
     }
 
-    override fun getSelectedRectangle(): Rectangle? {
-        return Plane.selectedRec
+    override fun getSelected(): ISelected? {
+        return Plane.selected
     }
 
-    override fun getSelectedPicture(): Picture? {
-        return Plane.selectedPicture
+    override fun getSelectedRectangle(): Rectangle? {
+        return Plane.selected?.getRectangle()
     }
 
     override fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
         Plane.moveRectangle(rectangle, x, y)
-        canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
-        canvasView.showSelectedAttribute(Plane.selectedRec)
+        canvasView.showAll(
+            Plane.rectangleList,
+            Plane.pictureList,
+            Plane.selectedRecList,
+            Plane.textList
+        )
+        canvasView.showSelectedAttribute(Plane.selected?.getRectangle())
     }
 
     override fun changeRectangleAttribute(changeAttribute: IChangeAttribute) {
         try {
-            Plane.selectedRec?.let { changeAttribute.applyChange(it) }
-            canvasView.showAll(Plane.rectangleList, Plane.pictureList, Plane.selectedRecList)
-            canvasView.showSelectedAttribute(Plane.selectedRec)
+            Plane.getSelectedRectangle()?.let { changeAttribute.applyChange(it) }
+            canvasView.showAll(
+                Plane.rectangleList,
+                Plane.pictureList,
+                Plane.selectedRecList,
+                Plane.textList
+            )
+            canvasView.showSelectedAttribute(Plane.getSelectedRectangle())
         } catch (e: PositiveLimitException) {
             Toast.makeText(canvasView as MainActivity, "1 미만의 값을 가질 수 없습니다", Toast.LENGTH_SHORT)
                 .show()
@@ -79,11 +130,11 @@ class CanvasPresenter(
 
     override fun setSelectedRectangle(x: Int, y: Int) {
         Plane.setSelectedRectangle(x, y)
-        val colorText: String = getSelectedColor(Plane.selectedRec)
+        val colorText: String = getSelectedColor(Plane.getSelectedRectangle())
         canvasView.showSelectedColor(colorText)
-        canvasView.showSelectedAlpha(Plane.selectedRec)
+        canvasView.showSelectedAlpha(Plane.getSelectedRectangle())
         canvasView.showSelectedBound(Plane.selectedRecList)
-        canvasView.showSelectedAttribute(Plane.selectedRec)
+        canvasView.showSelectedAttribute(Plane.getSelectedRectangle())
     }
 
     private fun getSelectedColor(selectedRec: Rectangle?): String {
@@ -99,29 +150,44 @@ class CanvasPresenter(
     }
 
     override fun changeRectangleColor() {
-        Plane.selectedRec?.let {
-            Plane.changeSelectedRectangleColor()
+        Plane.selected?.let {
+            it.changeToRandomColor()
             canvasView.showRectangle(Plane.rectangleList)
-            canvasView.showSelectedColor(getSelectedColor(Plane.selectedRec))
+            canvasView.showSelectedColor(getSelectedColor(it.getRectangle()))
         } ?: kotlin.run { return }
     }
 
     override fun changeRectangleAlpha(value: Float) {
-        Plane.selectedRec?.let {
+        Plane.selected?.getRectangle()?.let {
             val alphaList = AlphaEnum.values()
             it.rgba.a = alphaList[(value.toInt() - 1)]
             canvasView.showRectangle(Plane.rectangleList)
-            canvasView.showSelectedColor(getSelectedColor(Plane.selectedRec))
+            canvasView.showSelectedColor(getSelectedColor(it))
         } ?: kotlin.run { return }
     }
 
     private fun createRectangle(): Rectangle {
         val (widthDP, heightDP) = canvasView.getWindowSize()
-        return RectangleFactory().createRectangle(widthDP.toFloat(), heightDP.toFloat())
+        return Rectangle.createRectangle(widthDP.toFloat(), heightDP.toFloat())
+    }
+
+    private fun createRectangleForOther(): Rectangle {
+        val (widthDP, heightDP) = canvasView.getWindowSize()
+        return Rectangle.createRectangleForOther(widthDP.toFloat(), heightDP.toFloat())
     }
 
     private fun createImageRectangle(): Rectangle {
-        val rec = createRectangle()
+        val rec = createRectangleForOther()
+        rec.rgba.r = -1
+        rec.rgba.g = -1
+        rec.rgba.b = -1
+        return rec
+    }
+
+    private fun createTextRectangle(): Rectangle {
+        val rec = createRectangleForOther()
+        rec.size.height = WORD_HEIGHT
+        rec.size.width = WORD_WIDTH
         rec.rgba.r = -1
         rec.rgba.g = -1
         rec.rgba.b = -1
