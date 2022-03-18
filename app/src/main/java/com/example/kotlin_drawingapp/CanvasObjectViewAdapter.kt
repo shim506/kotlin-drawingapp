@@ -6,12 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_drawingapp.data.CanvasObjectType
+import com.example.kotlin_drawingapp.data.model.Plane
+import com.example.kotlin_drawingapp.orderstratgy.BackStrategy
+import com.example.kotlin_drawingapp.orderstratgy.ForthStrategy
+import com.example.kotlin_drawingapp.orderstratgy.MostBackStrategy
+import com.example.kotlin_drawingapp.orderstratgy.MostForthStrategy
 
 class CanvasObjectViewAdapter(
     private val context: Context,
-    private var dataListCanvas: MutableList<CanvasObjectData>
+    private var dataListCanvas: MutableList<CanvasObjectData>,
+    private val presenter: CanvasContract.Presenter
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -71,6 +78,7 @@ class CanvasObjectViewAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         when (dataListCanvas[position].type) {
             CanvasObjectType.RECTANGLE -> {
                 (holder as RectangleViewHolder).bind(dataListCanvas[position])
@@ -85,10 +93,43 @@ class CanvasObjectViewAdapter(
                 holder.setIsRecyclable(false)
             }
         }
+
         holder.itemView.setOnLongClickListener {
 
+            with(dataListCanvas[position]) {
+                val dialog = CanvasObjectStrategyDialogFragment(object : DialogClickListener {
+                    override fun onBackClicked() {
 
-            return@setOnLongClickListener (true)
+                        // dataList 도 업데이트
+                        // 실제 그려지는 것도 업데이트
+                        presenter.changeCanvasObjectOrder(
+                            BackStrategy(this@with.type, this@with.rectangle)
+                        )
+                    }
+
+                    override fun onMostBackClicked() {
+                        presenter.changeCanvasObjectOrder(
+                            MostBackStrategy(this@with.type, this@with.rectangle)
+                        )
+                    }
+
+                    override fun onForthClicked() {
+                        presenter.changeCanvasObjectOrder(
+                            ForthStrategy(this@with.type, this@with.rectangle)
+                        )
+                    }
+
+                    override fun onMostForthClicked() {
+                        presenter.changeCanvasObjectOrder(
+                            MostForthStrategy(this@with.type, this@with.rectangle)
+                        )
+                    }
+                }
+
+                )
+                dialog.show((context as FragmentActivity).supportFragmentManager, "얄루얄루")
+                return@setOnLongClickListener (true)
+            }
         }
     }
 
@@ -103,4 +144,11 @@ class CanvasObjectViewAdapter(
         notifyDataSetChanged()
     }
 
+}
+
+interface DialogClickListener {
+    fun onBackClicked()
+    fun onMostBackClicked()
+    fun onForthClicked()
+    fun onMostForthClicked()
 }

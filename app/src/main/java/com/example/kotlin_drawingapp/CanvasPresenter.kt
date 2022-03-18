@@ -14,6 +14,7 @@ import com.example.kotlin_drawingapp.data.model.Plane
 import com.example.kotlin_drawingapp.data.repository.LocalTextRepository
 import com.example.kotlin_drawingapp.data.repository.RectangleRepository
 import com.example.kotlin_drawingapp.data.model.selected.ISelected
+import com.example.kotlin_drawingapp.orderstratgy.CanvasObjectOrderStrategy
 import java.io.ByteArrayOutputStream
 import java.lang.StringBuilder
 
@@ -44,7 +45,13 @@ class CanvasPresenter(
                 )
             }
         })
-        canvasView.addCanvasObjectData(CanvasObjectData(CanvasObjectType.RECTANGLE, rect, rect.getNumber()))
+        canvasView.addCanvasObjectData(
+            CanvasObjectData(
+                CanvasObjectType.RECTANGLE,
+                rect,
+                rect.getNumber()
+            )
+        )
     }
 
     override fun addImageRectangle(bitmap: Bitmap) {
@@ -63,7 +70,13 @@ class CanvasPresenter(
                     )
                 }
             })
-        canvasView.addCanvasObjectData(CanvasObjectData(CanvasObjectType.PICTURE, rect, picture.getNumber()))
+        canvasView.addCanvasObjectData(
+            CanvasObjectData(
+                CanvasObjectType.PICTURE,
+                rect,
+                picture.getNumber()
+            )
+        )
     }
 
     override fun addText() {
@@ -77,7 +90,22 @@ class CanvasPresenter(
             plane.pictureList,
             plane.selectedRecList, plane.textList
         )
-        canvasView.addCanvasObjectData(CanvasObjectData(CanvasObjectType.TEXT, rec, newText.getNumber()))
+        canvasView.addCanvasObjectData(
+            CanvasObjectData(
+                CanvasObjectType.TEXT,
+                rec,
+                newText.getNumber()
+            )
+        )
+    }
+
+    override fun changeCanvasObjectOrder(strategy: CanvasObjectOrderStrategy) {
+        plane.changeOrder(strategy)
+        canvasView.showAll(
+            plane.rectangleList,
+            plane.pictureList,
+            plane.selectedRecList, plane.textList
+        )
     }
 
     private fun subtractRandomText(text: String, wordNumber: Int): String {

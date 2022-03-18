@@ -52,7 +52,9 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 
     private fun initRecycler() {
-        canvasObjectAdapter = CanvasObjectViewAdapter(this, dataList)
+        canvasObjectAdapter = CanvasObjectViewAdapter(this, dataList ,
+            canvasPresenter
+        )
 
         binding.objectRecyclerview?.let {
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -162,7 +164,7 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 
     override fun addCanvasObjectData(canvasObjectData: CanvasObjectData) {
-        dataList.add(0,canvasObjectData)
+        dataList.add(0, canvasObjectData)
         canvasObjectAdapter.updateReceiptsList(dataList)
     }
 

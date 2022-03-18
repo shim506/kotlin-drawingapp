@@ -8,5 +8,4 @@ data class CanvasObjectData(
     val type: CanvasObjectType,
     val rectangle: Rectangle,
     val dataNumber: Int
-) {
-}
+)

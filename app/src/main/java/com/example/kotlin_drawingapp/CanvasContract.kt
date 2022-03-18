@@ -5,6 +5,7 @@ import android.net.Uri
 import com.example.kotlin_drawingapp.changeAttr.IChangeAttribute
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.model.selected.ISelected
+import com.example.kotlin_drawingapp.orderstratgy.CanvasObjectOrderStrategy
 
 interface CanvasContract {
     interface Presenter {
@@ -19,6 +20,7 @@ interface CanvasContract {
         fun addImageRectangleWithUri(uri: Uri)
         fun changeRectangleAttribute(changeAttribute: IChangeAttribute)
         fun addText()
+        fun changeCanvasObjectOrder(strategy: CanvasObjectOrderStrategy)
     }
 
     interface View {

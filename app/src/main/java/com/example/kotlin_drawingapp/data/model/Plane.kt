@@ -7,6 +7,7 @@ import com.example.kotlin_drawingapp.data.model.selected.ISelected
 import com.example.kotlin_drawingapp.data.model.selected.PictureSelected
 import com.example.kotlin_drawingapp.data.model.selected.RectangleSelected
 import com.example.kotlin_drawingapp.data.model.selected.TextSelected
+import com.example.kotlin_drawingapp.orderstratgy.CanvasObjectOrderStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.Logger.d
 
@@ -97,5 +98,9 @@ object Plane {
 
     fun getSelectedRectangle(): Rectangle? {
         return selected?.getRectangle()
+    }
+
+    fun changeOrder(strategy: CanvasObjectOrderStrategy) {
+        strategy.changeOrder(rectangleList, pictureList, textList)
     }
 }
