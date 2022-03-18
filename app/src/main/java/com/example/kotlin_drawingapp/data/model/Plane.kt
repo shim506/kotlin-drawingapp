@@ -29,7 +29,6 @@ object Plane {
     fun addRectangle(rectangle: Rectangle, addListener: PlaneRectangleAddListener) {
         rectangleList.add(rectangle)
         addListener.onEvent(rectangleList)
-        Logger.d(rectangleList)
     }
 
     fun addImageRectangle(

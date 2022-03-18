@@ -3,7 +3,7 @@ package com.example.kotlin_drawingapp.data
 data class Picture(
     val byteArray: ByteArray,
     val rec: Rectangle
-) : Object {
+) : CanvasObject {
     var pictureNumber = -1
 
     init {

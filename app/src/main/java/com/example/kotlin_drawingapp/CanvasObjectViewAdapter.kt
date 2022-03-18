@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlin_drawingapp.data.CanvasObjectType
 
-class ObjectViewAdapter(
+class CanvasObjectViewAdapter(
     private val context: Context,
-    private var dataList: MutableList<ObjectData>
+    private var dataListCanvas: MutableList<CanvasObjectData>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    //var dataList = mutableListOf<ObjectData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View?
         return when (viewType) {
-            RECTANGLE_OBJECT_TYPE -> {
+            CanvasObjectType.RECTANGLE.value -> {
                 view = LayoutInflater.from(parent.context).inflate(
                     R.layout.rectangle_object_item,
                     parent,
@@ -26,7 +26,7 @@ class ObjectViewAdapter(
                 )
                 RectangleViewHolder(view)
             }
-            PICTURE_OBJECT_TYPE -> {
+            CanvasObjectType.PICTURE.value -> {
                 view = LayoutInflater.from(parent.context).inflate(
                     R.layout.photo_object_item,
                     parent,
@@ -48,7 +48,7 @@ class ObjectViewAdapter(
     inner class RectangleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val container: ConstraintLayout = view.findViewById(R.id.rectangle_object_container)
         private val numberTextView: TextView = view.findViewById(R.id.rectangle_num_text_view)
-        fun bind(item: ObjectData) {
+        fun bind(item: CanvasObjectData) {
             numberTextView.text = item.dataNumber.toString()
         }
     }
@@ -56,7 +56,7 @@ class ObjectViewAdapter(
     inner class PictureViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val container: ConstraintLayout = view.findViewById(R.id.photo_object_container)
         private val numberTextView: TextView = view.findViewById(R.id.photo_num_text_view)
-        fun bind(item: ObjectData) {
+        fun bind(item: CanvasObjectData) {
             numberTextView.text = item.dataNumber.toString()
         }
     }
@@ -64,36 +64,42 @@ class ObjectViewAdapter(
     inner class TextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val container: ConstraintLayout = view.findViewById(R.id.text_object_container)
         private val numberTextView: TextView = view.findViewById(R.id.text_num_text_view)
-        fun bind(item: ObjectData) {
+        fun bind(item: CanvasObjectData) {
             numberTextView.text = item.dataNumber.toString()
         }
+
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (dataList[position].type) {
-            RECTANGLE_OBJECT_TYPE -> {
-                (holder as RectangleViewHolder).bind(dataList[position])
+        when (dataListCanvas[position].type) {
+            CanvasObjectType.RECTANGLE -> {
+                (holder as RectangleViewHolder).bind(dataListCanvas[position])
                 holder.setIsRecyclable(false)
             }
-            PICTURE_OBJECT_TYPE -> {
-                (holder as PictureViewHolder).bind(dataList[position])
+            CanvasObjectType.PICTURE -> {
+                (holder as PictureViewHolder).bind(dataListCanvas[position])
                 holder.setIsRecyclable(false)
             }
             else -> {
-                (holder as TextViewHolder).bind(dataList[position])
+                (holder as TextViewHolder).bind(dataListCanvas[position])
                 holder.setIsRecyclable(false)
             }
+        }
+        holder.itemView.setOnLongClickListener {
+
+
+            return@setOnLongClickListener (true)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return dataList[position].type
+        return dataListCanvas[position].type.value
     }
 
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int = dataListCanvas.size
 
-    fun updateReceiptsList(newList: MutableList<ObjectData>) {
-        dataList = newList
+    fun updateReceiptsList(newList: MutableList<CanvasObjectData>) {
+        dataListCanvas = newList
         notifyDataSetChanged()
     }
 

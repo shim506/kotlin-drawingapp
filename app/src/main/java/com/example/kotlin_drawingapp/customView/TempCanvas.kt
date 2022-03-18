@@ -5,7 +5,6 @@ import android.graphics.*
 import com.example.kotlin_drawingapp.data.*
 import com.example.kotlin_drawingapp.data.Picture
 import com.example.kotlin_drawingapp.data.Point
-import com.orhanobut.logger.Logger
 
 const val ALPHA_VALUE = 0.5F
 
@@ -17,7 +16,7 @@ class TempCanvas(
 ) : BaseCanvas(context) {
     private var rect: RectF = RectF()
 
-    private var objectType: ObjectType? = null
+    private var canvasObjectType: CanvasObjectType? = null
     var selectedPicture: Picture? = null
     var selectedText: Text? = null
 
@@ -25,7 +24,7 @@ class TempCanvas(
     private var touchY = convertPxToDp(dpClickY)
 
     fun drawTempRectangle(pxX: Int, pxY: Int) {
-        objectType = ObjectType.RECTANGLE
+        canvasObjectType = CanvasObjectType.RECTANGLE
         val (startX, startY) = getTempPosPx(pxX, pxY)
         rectangle?.let {
             val width = convertDpToPx(it.size.width)
@@ -36,7 +35,7 @@ class TempCanvas(
     }
 
     fun drawTempPicture(x: Int, y: Int, picture: Picture) {
-        objectType = ObjectType.PICTURE
+        canvasObjectType = CanvasObjectType.PICTURE
         selectedPicture = picture
         touchX = x
         touchY = y
@@ -44,7 +43,7 @@ class TempCanvas(
     }
 
     fun drawTempText(x: Int, y: Int, selected: Text) {
-        objectType = ObjectType.TEXT
+        canvasObjectType = CanvasObjectType.TEXT
         selectedText = selected
         touchX = x
         touchY = y
@@ -59,8 +58,8 @@ class TempCanvas(
 
     override fun onDraw(canvas: Canvas?) {
 
-        when (objectType) {
-            ObjectType.PICTURE -> {
+        when (canvasObjectType) {
+            CanvasObjectType.PICTURE -> {
                 selectedPicture?.let {
                     with(it.rec) {
                         val bitmap = android.graphics.BitmapFactory.decodeByteArray(
@@ -82,14 +81,14 @@ class TempCanvas(
                     // Logger.d("픽쳐 ${it.getNumber()}")
                 }
             }
-            ObjectType.RECTANGLE -> {
+            CanvasObjectType.RECTANGLE -> {
                 rectangle?.let {
                     val paint = setLowerAlphaPaint(rectangle, ALPHA_VALUE)
                     canvas?.drawRect(rect, paint)
                     //Logger.d("렉텡 ${it.getNumber()}")
                 }
             }
-            ObjectType.TEXT -> {
+            CanvasObjectType.TEXT -> {
                 val textPaint = Paint()
                 textPaint.textSize = 50F
                 val tempPoint = getTempPosPx(touchX, touchY)

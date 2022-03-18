@@ -37,7 +37,7 @@ interface CanvasContract {
         fun getWindowSize(): Pair<Int, Int>
         fun showSelectedAttribute(selectedRec: Rectangle?)
         fun showSelectedAttribute(point: Point, size: Size?)
-        fun addObjectData(objectData: ObjectData)
+        fun addCanvasObjectData(canvasObjectData: CanvasObjectData)
     }
 
 }

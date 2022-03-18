@@ -1,5 +1,5 @@
 package com.example.kotlin_drawingapp.data
 
-interface Object {
+interface CanvasObject {
     fun getNumber(): Int
 }

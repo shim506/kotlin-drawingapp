@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     lateinit var myCanvas: MyCanvas
     lateinit var tempCanvas: TempCanvas
     var canvasSize: Pair<Int, Int> = Pair(0, 0)
-    lateinit var objectAdapter: ObjectViewAdapter
-    private val dataList = mutableListOf<ObjectData>()
+    lateinit var canvasObjectAdapter: CanvasObjectViewAdapter
+    private val dataList = mutableListOf<CanvasObjectData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,16 +52,15 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
     }
 
     private fun initRecycler() {
-        //dataList.add(ObjectData(RECTANGLE_OBJECT_TYPE, Rectangle.createRectangle(200F, 200F), 10))
-        objectAdapter = ObjectViewAdapter(this, dataList)
+        canvasObjectAdapter = CanvasObjectViewAdapter(this, dataList)
 
         binding.objectRecyclerview?.let {
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             it.layoutManager = layoutManager
-            it.adapter = objectAdapter
+            it.adapter = canvasObjectAdapter
         }
 
-        objectAdapter.notifyDataSetChanged()
+        canvasObjectAdapter.notifyDataSetChanged()
     }
 
     private fun attachCanvas() {
@@ -162,9 +161,9 @@ class MainActivity : AppCompatActivity(), CanvasContract.View {
         binding.sizeHeightUpDownView?.value?.text = size?.height.toString()
     }
 
-    override fun addObjectData(objectData: ObjectData) {
-        dataList.add(0,objectData)
-        objectAdapter.updateReceiptsList(dataList)
+    override fun addCanvasObjectData(canvasObjectData: CanvasObjectData) {
+        dataList.add(0,canvasObjectData)
+        canvasObjectAdapter.updateReceiptsList(dataList)
     }
 
     private fun initializeMyCanvas(): MyCanvas {
