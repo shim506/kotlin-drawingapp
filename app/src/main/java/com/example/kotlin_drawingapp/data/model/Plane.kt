@@ -42,12 +42,7 @@ object Plane {
 
     // add가 될 수도 있고 빈공간일 경우 모든 데이터를 지우기에 set prefix
     fun setSelectedRectangle(x: Int, y: Int) {
-        val allRectangleList = mutableListOf<Rectangle>()
-        allRectangleList.addAll(rectangleList)
-        allRectangleList.addAll(pictureList.map { it.rec })
-        allRectangleList.addAll(textList.map { it.rec })
-
-        if (existRecOrPic(x, y, allRectangleList)) {
+        if (existRecOrPic(x, y)) {
             selectedRecList.clear()
             selected = null
         } else {
@@ -75,32 +70,68 @@ object Plane {
         }
     }
 
-    private fun existRecOrPic(x: Int, y: Int, allList: MutableList<Rectangle>): Boolean {
-        return allList.none { pointInRectangle(it, x, y) }
-    }
+    fun setSelectedRectangle(rectangle: Rectangle) {
 
-    private fun pointInRectangle(rec: Rectangle, x: Int, y: Int): Boolean {
-        if (x >= rec.point.x && y >= rec.point.y) {
-            if (x <= rec.point.x + rec.size.width && y <= rec.point.y + rec.size.height) {
-                return true
+        rectangleList.forEach {
+            if (it == rectangle) {
+                selectedRecList.add(it)
+                selected = RectangleSelected(it)
+                return
             }
         }
-        return false
+        pictureList.forEach {
+            if (it.rec == rectangle) {
+                selectedRecList.add(it.rec)
+                selected = PictureSelected(it)
+                return
+            }
+        }
+        textList.forEach {
+            if (it.rec == rectangle) {
+                selectedRecList.add(it.rec)
+                selected = TextSelected(it)
+                return
+            }
+        }
+        selectedRecList.clear()
+        selected = null
+
     }
 
-    fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
-        rectangle?.point = Point(x, y)
-    }
 
-    fun addText(randomText: Text) {
-        textList.add(randomText)
-    }
+private fun existRecOrPic(x: Int, y: Int): Boolean {
+    val allRectangleList = mutableListOf<Rectangle>()
+    allRectangleList.addAll(rectangleList)
+    allRectangleList.addAll(pictureList.map { it.rec })
+    allRectangleList.addAll(textList.map { it.rec })
 
-    fun getSelectedRectangle(): Rectangle? {
-        return selected?.getRectangle()
-    }
+    return allRectangleList.none { pointInRectangle(it, x, y) }
+}
 
-    fun changeOrder(strategy: CanvasObjectOrderStrategy) {
-        strategy.changeOrder(rectangleList, pictureList, textList)
+private fun pointInRectangle(rec: Rectangle, x: Int, y: Int): Boolean {
+    if (x >= rec.point.x && y >= rec.point.y) {
+        if (x <= rec.point.x + rec.size.width && y <= rec.point.y + rec.size.height) {
+            return true
+        }
     }
+    return false
+}
+
+fun moveRectangle(rectangle: Rectangle?, x: Int, y: Int) {
+    rectangle?.point = Point(x, y)
+}
+
+fun addText(randomText: Text) {
+    textList.add(randomText)
+}
+
+fun getSelectedRectangle(): Rectangle? {
+    return selected?.getRectangle()
+}
+
+fun changeOrder(strategy: CanvasObjectOrderStrategy) {
+    strategy.changeOrder(rectangleList, pictureList, textList)
+}
+
+
 }

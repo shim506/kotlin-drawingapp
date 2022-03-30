@@ -161,6 +161,15 @@ class CanvasPresenter(
 
     override fun setSelectedRectangle(x: Int, y: Int) {
         plane.setSelectedRectangle(x, y)
+        showSelectedChange()
+    }
+
+    override fun setSelectedRectangle(rectangle: Rectangle) {
+        plane.setSelectedRectangle(rectangle)
+        showSelectedChange()
+    }
+
+    private fun showSelectedChange() {
         val colorText: String = getSelectedColor(plane.getSelectedRectangle())
         canvasView.showSelectedColor(colorText)
         canvasView.showSelectedAlpha(plane.getSelectedRectangle())

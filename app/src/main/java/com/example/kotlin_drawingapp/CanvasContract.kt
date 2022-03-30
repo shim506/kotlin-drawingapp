@@ -11,6 +11,7 @@ interface CanvasContract {
     interface Presenter {
         fun addRectangle()
         fun setSelectedRectangle(x: Int, y: Int)
+        fun setSelectedRectangle(rectangle: Rectangle)
         fun changeRectangleColor()
         fun changeRectangleAlpha(value: Float)
         fun addImageRectangle(bitmap: Bitmap)

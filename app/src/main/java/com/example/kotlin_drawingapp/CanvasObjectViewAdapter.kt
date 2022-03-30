@@ -1,6 +1,7 @@
 package com.example.kotlin_drawingapp
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,8 @@ class CanvasObjectViewAdapter(
     private val presenter: CanvasContract.Presenter
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    var selectedView: View? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View?
@@ -78,7 +81,10 @@ class CanvasObjectViewAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
+        if (holder.itemView == selectedView){
+            selectedView?.setBackgroundResource(R.drawable.my_stroke)
+            selectedView?.setBackgroundColor(Color.RED)
+        }
         when (dataListCanvas[position].type) {
             CanvasObjectType.RECTANGLE -> {
                 (holder as RectangleViewHolder).bind(dataListCanvas[position])
@@ -93,9 +99,13 @@ class CanvasObjectViewAdapter(
                 holder.setIsRecyclable(false)
             }
         }
+        holder.itemView.setOnClickListener {
+            selectedView = it
+            presenter.setSelectedRectangle(dataListCanvas[position].rectangle)
+            notifyDataSetChanged()
+        }
 
         holder.itemView.setOnLongClickListener {
-
             with(dataListCanvas[position]) {
                 val dialog = CanvasObjectStrategyDialogFragment(object : DialogClickListener {
                     override fun onBackClicked() {
@@ -132,6 +142,7 @@ class CanvasObjectViewAdapter(
             }
         }
     }
+
 
     override fun getItemViewType(position: Int): Int {
         return dataListCanvas[position].type.value

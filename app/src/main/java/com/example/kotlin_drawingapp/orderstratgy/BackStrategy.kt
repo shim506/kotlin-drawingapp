@@ -27,7 +27,7 @@ class BackStrategy(type: CanvasObjectType, rectangle: Rectangle) :
         val idx = list.map { it.rec }.indexOf(rectangle)
         val picture = list[idx]
         list.removeAt(idx)
-    
+
         //제일 앞 원소일 경우
         try {
             list.add(idx - 1, picture)
