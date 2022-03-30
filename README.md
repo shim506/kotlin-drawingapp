@@ -10,3 +10,5 @@
 - 개체의 드레그 앤 드롭 구현 
 - 지정 개체 위치및 크기 변경
 - 지정 개체 색깔 및 투명도 변경
+
+https://user-images.githubusercontent.com/62047631/160875683-61038bb4-d857-490e-96a5-00f39c4aa742.mov
